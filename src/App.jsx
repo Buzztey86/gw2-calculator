@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ProfessionPicker from "./components/ProfessionPicker";
 import TraitLinePicker from "./components/TraitLinePicker";
 import WeaponSkillBrowser from "./components/WeaponSkillBrowser";
@@ -80,28 +80,45 @@ export default function App() {
     if (data) setLastData(data);
   }, [data]);
 
+  // Merkt sich, fuer welche Klasse Talente/Skills bereits initialisiert wurden (per Import ODER
+  // per Default), damit der Default-Reset-Effekt unten NICHT erneut feuert, wenn sich z.B. nur
+  // paletteMap asynchron aendert - das war die Ursache dafuer, dass importierte Heal-/Utility-
+  // /Elite-Skills kurz nach einem erfolgreichen Import wieder auf "nichts ausgewaehlt" zurueckfielen.
+  const initializedProfessionRef = useRef(null);
+
+  // Effekt 1: wendet einen anstehenden Build-Code-Import an, sobald sowohl die Klassendaten als
+  // auch die Skill-Palette-Map bereit sind.
+  useEffect(() => {
+    if (!data || data.id !== professionId || !paletteMap) return;
+    if (!pendingImportCode) return;
+    try {
+      const decoded = decodeBuildCode(pendingImportCode, { [professionId]: data }, paletteMap);
+      setEliteSpec(decoded.eliteSpec);
+      setLines(decoded.lines);
+      setSelectedMajors(decoded.selectedMajors);
+      setSelectedHeal(decoded.selectedHeal);
+      setSelectedUtilities(decoded.selectedUtilities);
+      setSelectedElite(decoded.selectedElite);
+      const profLabel = PROFESSION_LIST.find((p) => p.id === professionId)?.name || professionId;
+      setImportStatus({
+        ok: true,
+        message: `Import erfolgreich: ${profLabel}${decoded.eliteSpec ? " · " + decoded.eliteSpec : ""}, ${decoded.lines.length} Talentlinien, Heal-/Utility-/Elite-Skills übernommen.`,
+      });
+    } catch (err) {
+      setImportStatus({ ok: false, message: "Import fehlgeschlagen: " + err.message });
+    }
+    initializedProfessionRef.current = professionId;
+    setPendingImportCode(null);
+  }, [data, pendingImportCode, professionId, paletteMap]);
+
+  // Effekt 2: setzt Standard-Talente, wenn eine Klasse zum ersten Mal geladen wird (kein Import
+  // ausstehend, noch nicht initialisiert). Haengt bewusst NICHT von paletteMap ab, damit er nicht
+  // nachtraeglich einen laengst abgeschlossenen Import ueberschreibt.
   useEffect(() => {
     if (!data || data.id !== professionId) return;
-    if (pendingImportCode) {
-      try {
-        const decoded = decodeBuildCode(pendingImportCode, { [professionId]: data }, paletteMap);
-        setEliteSpec(decoded.eliteSpec);
-        setLines(decoded.lines);
-        setSelectedMajors(decoded.selectedMajors);
-        setSelectedHeal(decoded.selectedHeal);
-        setSelectedUtilities(decoded.selectedUtilities);
-        setSelectedElite(decoded.selectedElite);
-        const profLabel = PROFESSION_LIST.find((p) => p.id === professionId)?.name || professionId;
-        setImportStatus({
-          ok: true,
-          message: `Import erfolgreich: ${profLabel}${decoded.eliteSpec ? " · " + decoded.eliteSpec : ""}, ${decoded.lines.length} Talentlinien übernommen.`,
-        });
-      } catch (err) {
-        setImportStatus({ ok: false, message: "Import fehlgeschlagen: " + err.message });
-      }
-      setPendingImportCode(null);
-      return;
-    }
+    if (pendingImportCode) return; // Effekt 1 kümmert sich darum
+    if (initializedProfessionRef.current === professionId) return; // schon behandelt
+    initializedProfessionRef.current = professionId;
     setEliteSpec(null);
     setSelectedHeal(null);
     setSelectedUtilities([]);
@@ -114,7 +131,7 @@ export default function App() {
       if (spec) majors[lineId] = pickDefaultMajors(spec);
     }
     setSelectedMajors(majors);
-  }, [data, pendingImportCode, professionId, paletteMap]);
+  }, [data, pendingImportCode, professionId]);
 
   function handleImportBuildCode(code) {
     const targetProfession = peekProfessionFromCode(code); // wirft bei ungültigem Code
