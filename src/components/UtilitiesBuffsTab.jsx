@@ -82,6 +82,19 @@ function itemKey(item) {
   return `${item.type}:${item.key}`;
 }
 
+// Schlüssel zum Abgleich, ob dieselbe Fähigkeit/Talent in mehreren Filter-Listen auftaucht
+function providerKey(p) {
+  return `${p.profession}::${p.name}`;
+}
+
+function intersectProviders(lists) {
+  if (lists.length === 0) return [];
+  if (lists.length === 1) return lists[0];
+  const [first, ...rest] = lists;
+  const restKeySets = rest.map((list) => new Set(list.map(providerKey)));
+  return first.filter((p) => restKeySets.every((keys) => keys.has(providerKey(p))));
+}
+
 export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects }) {
   const [selectedItems, setSelectedItems] = useState([]); // [{ type, key }]
   const [filterText, setFilterText] = useState("");
@@ -105,7 +118,8 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
     return item.type === "utility" ? utilityIndex?.[item.key] || [] : boonProviders?.[item.key] || [];
   }
 
-  const totalResults = selectedItems.reduce((sum, item) => sum + providersFor(item).length, 0);
+  const allLists = selectedItems.map(providersFor);
+  const combinedResults = intersectProviders(allLists);
 
   return (
     <div className="grid-cols" style={{ gridTemplateColumns: "1fr 2fr" }}>
@@ -149,7 +163,9 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
           <div className="label" style={{ color: "var(--accent)" }}>
             {selectedItems.length === 0
               ? "Auswahl links treffen"
-              : `${selectedItems.length} ausgewählt · ${totalResults} Einträge`}
+              : selectedItems.length === 1
+              ? `${labelFor(selectedItems[0])} · ${combinedResults.length} Einträge`
+              : `${selectedItems.length} Filter (UND-verknüpft) · ${combinedResults.length} Treffer`}
           </div>
           {selectedItems.length > 0 && (
             <button
@@ -161,9 +177,29 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
           )}
         </div>
 
+        {selectedItems.length > 1 && (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 12 }}>
+            {selectedItems.map((item) => (
+              <span
+                key={itemKey(item)}
+                style={{
+                  fontSize: 10.5,
+                  padding: "3px 8px",
+                  borderRadius: 12,
+                  background: "var(--accent-bg)",
+                  border: "1px solid var(--accent-border)",
+                  color: "var(--accent)",
+                }}
+              >
+                {labelFor(item)}
+              </span>
+            ))}
+          </div>
+        )}
+
         {selectedItems.length > 0 ? (
           <>
-            {totalResults > 8 && (
+            {combinedResults.length > 8 && (
               <input
                 type="text"
                 placeholder="Nach Name oder Klasse filtern…"
@@ -173,28 +209,17 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
                 style={{ marginBottom: 12 }}
               />
             )}
-            {selectedItems.map((item) => (
-              <div key={itemKey(item)} style={{ marginBottom: 20 }}>
-                <div
-                  style={{
-                    fontSize: 13.5,
-                    fontWeight: 600,
-                    color: "var(--text)",
-                    marginBottom: 8,
-                    paddingBottom: 6,
-                    borderBottom: "1px solid var(--border-strong)",
-                  }}
-                >
-                  {labelFor(item)}
-                </div>
-                <ProviderList providers={providersFor(item)} filterText={filterText} />
+            <ProviderList providers={combinedResults} filterText={filterText} />
+            {selectedItems.length > 1 && combinedResults.length === 0 && (
+              <div style={{ fontSize: 11.5, color: "var(--text-faint)", marginTop: 8 }}>
+                Keine Fähigkeit/kein Talent erfüllt alle {selectedItems.length} gewählten Filter gleichzeitig.
               </div>
-            ))}
+            )}
           </>
         ) : (
           <div style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
-            Wähle links eine oder mehrere Utility-Kategorien bzw. Boons, um zu sehen, welche Klassen und Fähigkeiten
-            sie bereitstellen.
+            Wähle links eine oder mehrere Utility-Kategorien bzw. Boons. Bei mehreren Auswahlen werden nur
+            Fähigkeiten/Talente gezeigt, die <strong>alle</strong> gewählten Filter gleichzeitig erfüllen (UND-Verknüpfung).
           </div>
         )}
       </div>
