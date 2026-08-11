@@ -4,6 +4,8 @@ import TraitLinePicker from "./components/TraitLinePicker";
 import WeaponSkillBrowser from "./components/WeaponSkillBrowser";
 import GearSlotPicker from "./components/GearSlotPicker";
 import UtilitiesBuffsTab from "./components/UtilitiesBuffsTab";
+import UtilitySkillPicker from "./components/UtilitySkillPicker";
+import BuildCodeBar from "./components/BuildCodeBar";
 import Sidebar from "./components/Sidebar";
 import { useProfessionData, useStaticData } from "./hooks/useGw2Data";
 import { validateBuild, getActiveTraits, getTraitAttributeBonuses, pickDefaultMajors, getAvailableBuffs } from "./lib/build-model";
@@ -45,6 +47,11 @@ export default function App() {
   const [selectedInfusion, setSelectedInfusion] = useState(null);
   const [selectedFood, setSelectedFood] = useState(null);
   const [selectedUtility, setSelectedUtility] = useState(null);
+  const [selectedHeal, setSelectedHeal] = useState(null);
+  const [selectedUtilities, setSelectedUtilities] = useState([]);
+  const [selectedElite, setSelectedElite] = useState(null);
+  const [skillTab, setSkillTab] = useState("waffen");
+  const [pendingImport, setPendingImport] = useState(null);
 
   const { data, error, loading } = useProfessionData(professionId);
   const professionsIndex = useStaticData("professions-index");
@@ -62,7 +69,20 @@ export default function App() {
 
   useEffect(() => {
     if (!data) return;
+    if (pendingImport && pendingImport.professionId === professionId) {
+      setEliteSpec(pendingImport.eliteSpec);
+      setLines(pendingImport.lines);
+      setSelectedMajors(pendingImport.selectedMajors);
+      setSelectedHeal(pendingImport.selectedHeal);
+      setSelectedUtilities(pendingImport.selectedUtilities);
+      setSelectedElite(pendingImport.selectedElite);
+      setPendingImport(null);
+      return;
+    }
     setEliteSpec(null);
+    setSelectedHeal(null);
+    setSelectedUtilities([]);
+    setSelectedElite(null);
     const defaultLines = defaultLinesFor(data);
     setLines(defaultLines);
     const majors = {};
@@ -71,11 +91,27 @@ export default function App() {
       if (spec) majors[lineId] = pickDefaultMajors(spec);
     }
     setSelectedMajors(majors);
-  }, [data]);
+  }, [data, pendingImport, professionId]);
+
+  function handleImportBuildCode(decoded) {
+    setPendingImport(decoded);
+    if (decoded.professionId !== professionId) {
+      setProfessionId(decoded.professionId);
+    } else {
+      // Bereits auf der richtigen Klasse: Daten sind schon geladen, direkt anwenden
+      setEliteSpec(decoded.eliteSpec);
+      setLines(decoded.lines);
+      setSelectedMajors(decoded.selectedMajors);
+      setSelectedHeal(decoded.selectedHeal);
+      setSelectedUtilities(decoded.selectedUtilities);
+      setSelectedElite(decoded.selectedElite);
+      setPendingImport(null);
+    }
+  }
 
   const build = useMemo(
-    () => ({ professionId, eliteSpec, lines, selectedMajors }),
-    [professionId, eliteSpec, lines, selectedMajors]
+    () => ({ professionId, eliteSpec, lines, selectedMajors, selectedHeal, selectedUtilities, selectedElite }),
+    [professionId, eliteSpec, lines, selectedMajors, selectedHeal, selectedUtilities, selectedElite]
   );
   const validation = useMemo(() => (data ? validateBuild(build, data) : { valid: false, errors: [] }), [data, build]);
   const activeTraits = useMemo(() => (data ? getActiveTraits(build, data) : []), [data, build]);
@@ -157,30 +193,58 @@ export default function App() {
             </div>
 
             {tab === "talente" && (
-              <div className="grid-cols grid-2">
-                <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
-                  <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
-                    Talente (3-Linien-System)
+              <>
+                <BuildCodeBar build={build} onImport={handleImportBuildCode} />
+                <div className="grid-cols grid-2">
+                  <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
+                    <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
+                      Talente (3-Linien-System)
+                    </div>
+                    <TraitLinePicker
+                      professionData={data}
+                      eliteSpec={eliteSpec}
+                      setEliteSpec={setEliteSpec}
+                      lines={lines}
+                      setLines={setLines}
+                      selectedMajors={selectedMajors}
+                      setSelectedMajors={setSelectedMajors}
+                      validation={validation}
+                    />
                   </div>
-                  <TraitLinePicker
-                    professionData={data}
-                    eliteSpec={eliteSpec}
-                    setEliteSpec={setEliteSpec}
-                    lines={lines}
-                    setLines={setLines}
-                    selectedMajors={selectedMajors}
-                    setSelectedMajors={setSelectedMajors}
-                    validation={validation}
-                  />
-                </div>
 
-                <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
-                  <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
-                    Waffenfähigkeiten (live nach Talenten)
+                  <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
+                    <div className="weapon-tabs" style={{ marginBottom: 10 }}>
+                      <button
+                        className={`weapon-tab ${skillTab === "waffen" ? "active" : ""}`}
+                        onClick={() => setSkillTab("waffen")}
+                      >
+                        Waffenfähigkeiten
+                      </button>
+                      <button
+                        className={`weapon-tab ${skillTab === "utility" ? "active" : ""}`}
+                        onClick={() => setSkillTab("utility")}
+                      >
+                        Utility-Skills
+                      </button>
+                    </div>
+                    {skillTab === "waffen" ? (
+                      <WeaponSkillBrowser professionData={data} activeTraitIds={activeTraitIds} traitsById={traitsById} />
+                    ) : (
+                      <UtilitySkillPicker
+                        professionData={data}
+                        selectedHeal={selectedHeal}
+                        setSelectedHeal={setSelectedHeal}
+                        selectedUtilities={selectedUtilities}
+                        setSelectedUtilities={setSelectedUtilities}
+                        selectedElite={selectedElite}
+                        setSelectedElite={setSelectedElite}
+                        activeTraitIds={activeTraitIds}
+                        traitsById={traitsById}
+                      />
+                    )}
                   </div>
-                  <WeaponSkillBrowser professionData={data} activeTraitIds={activeTraitIds} traitsById={traitsById} />
                 </div>
-              </div>
+              </>
             )}
 
             {tab === "ausruestung" && (
