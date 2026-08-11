@@ -16,13 +16,13 @@ export default function Sidebar({ professionName, gearTotal, rarity, traitBonuse
       />
 
       <div className="label" style={{ color: "var(--accent)", margin: "18px 0 8px" }}>
-        Verfügbare Buffs (aus Talenten)
+        Available Buffs (from Traits)
       </div>
       <AvailableBuffsPanel availableBuffs={availableBuffs} effects={effects} />
 
       <details style={{ marginTop: 18 }}>
         <summary className="label" style={{ color: "var(--accent)", cursor: "pointer" }}>
-          Aktive Talente ({activeTraits.length})
+          Active Traits ({activeTraits.length})
         </summary>
         <div style={{ marginTop: 8 }}>
           {activeTraits.map((t) => (

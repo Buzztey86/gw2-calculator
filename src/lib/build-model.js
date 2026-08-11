@@ -24,10 +24,10 @@ export function validateBuild(build, professionData) {
     errors.push(`Unbekannte Elite-Spezialisierung: "${build.eliteSpec}"`);
   }
   if (build.lines.length !== 3) {
-    errors.push(`Es müssen genau 3 Talentlinien gewählt sein (aktuell: ${build.lines.length}).`);
+    errors.push(`Exactly 3 trait lines must be selected (currently: ${build.lines.length}).`);
   }
   if (new Set(build.lines).size !== build.lines.length) {
-    errors.push("Eine Talentlinie ist doppelt gewählt.");
+    errors.push("A trait line is selected twice.");
   }
 
   let eliteLinesChosen = 0;
@@ -36,10 +36,10 @@ export function validateBuild(build, professionData) {
     const isActiveElite = activeEliteSpec && activeEliteSpec.id === lineId;
     if (isActiveElite) eliteLinesChosen++;
     if (!isCore && !isActiveElite) {
-      errors.push(`Talentlinie ${lineId} ist nicht wählbar.`);
+      errors.push(`Trait line ${lineId} is not selectable.`);
     }
   }
-  if (eliteLinesChosen > 1) errors.push("Es kann nur eine Elite-Talentlinie gleichzeitig aktiv sein.");
+  if (eliteLinesChosen > 1) errors.push("Only one elite trait line can be active at a time.");
 
   const specById = new Map([...core, ...elite].map((s) => [s.id, s]));
   for (const lineId of build.lines) {
@@ -47,14 +47,14 @@ export function validateBuild(build, professionData) {
     if (!spec) continue;
     const chosen = build.selectedMajors[lineId] || [];
     if (chosen.length !== 3) {
-      errors.push(`"${spec.name}": es müssen genau 3 Major-Traits gewählt sein (1 pro Tier).`);
+      errors.push(`"${spec.name}": exactly 3 major traits must be selected (1 per tier).`);
       continue;
     }
     const tiersSeen = new Set();
     for (const traitId of chosen) {
       const trait = spec.traits.find((t) => t.id === traitId && t.slot === "Major");
       if (!trait) {
-        errors.push(`"${spec.name}": Trait-ID ${traitId} ist ungültig.`);
+        errors.push(`"${spec.name}": trait ID ${traitId} is invalid.`);
         continue;
       }
       if (tiersSeen.has(trait.tier)) {

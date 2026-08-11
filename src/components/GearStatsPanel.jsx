@@ -71,8 +71,8 @@ export default function GearStatsPanel({ professionName, gearTotal, rarity = "ex
   return (
     <div>
       <div className="label" style={{ marginBottom: 6, color: "var(--accent)" }}>
-        Rohattribute
-        <span style={{ color: "var(--positive)", marginLeft: 8, fontWeight: 400 }}>■ Talent-Bonus</span>
+        Raw Attributes
+        <span style={{ color: "var(--positive)", marginLeft: 8, fontWeight: 400 }}>■ Trait Bonus</span>
       </div>
       {primaryAttrs.map((attr) => (
         <AttrRow key={attr} attr={attr} gearValue={gearTotal[attr]} traitDelta={traitDeltaFor(attr, traitBonuses)} />
@@ -82,7 +82,7 @@ export default function GearStatsPanel({ professionName, gearTotal, rarity = "ex
       ))}
 
       <div className="label" style={{ margin: "16px 0 6px", color: "var(--accent)" }}>
-        Abgeleitete Werte
+        Derived Stats
       </div>
       <DerivedRow label="Critical Chance" gearOnly={derivedGear.critChance} withTraits={derivedTotal.critChance} unit="%" />
       <DerivedRow label="Critical Damage" gearOnly={derivedGear.critDamage} withTraits={derivedTotal.critDamage} unit="%" />
@@ -93,31 +93,31 @@ export default function GearStatsPanel({ professionName, gearTotal, rarity = "ex
 
       <div className="hero-stat">
         <div className="label" style={{ color: "var(--accent)" }}>
-          Effektive Lebenspunkte
+          Effective Health Points
         </div>
         <div className="value">
-          {derivedTotal.eHP.toLocaleString("de-DE")}
+          {derivedTotal.eHP.toLocaleString("en-US")}
           {derivedTotal.eHP !== derivedGear.eHP && (
             <span style={{ color: "var(--positive)", fontSize: 14, marginLeft: 6 }}>
-              (Basis: {derivedGear.eHP.toLocaleString("de-DE")})
+              (Base: {derivedGear.eHP.toLocaleString("en-US")})
             </span>
           )}
         </div>
-        <div className="sub">eHP ≈ Health × Armor ÷ 2597 (Referenz-Golem)</div>
+        <div className="sub">eHP ≈ Health × Armor ÷ 2597 (reference golem)</div>
       </div>
 
       <div className="hero-stat">
         <div className="label" style={{ color: "var(--accent)" }}>
-          Ø-Schaden/Treffer (Beispiel-Skill)
+          Avg. Damage/Hit (example skill)
         </div>
-        <div className="value">{Math.round(avgDmg).toLocaleString("de-DE")}</div>
-        <div className="sub">Koeff. 1.0, Waffenstärke {weaponStrength}, gg. 2597 Armor</div>
+        <div className="value">{Math.round(avgDmg).toLocaleString("en-US")}</div>
+        <div className="sub">Coeff. 1.0, weapon strength {weaponStrength}, vs. 2597 armor</div>
       </div>
 
       {triggeredEffects.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div className="label" style={{ marginBottom: 6 }}>
-            Getriggerte Effekte (nicht in Stats)
+            Triggered Effects (not in stats)
           </div>
           {triggeredEffects.map((e, i) => (
             <div key={i} style={{ fontSize: 11, color: "var(--text-muted)" }}>

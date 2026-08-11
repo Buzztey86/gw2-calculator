@@ -6,7 +6,7 @@ import Icon from "./Icon";
  * [{ value, label, icon?, sublabel?, title? }]. `value` / `onChange` verhalten
  * sich wie bei einem normalen Select (onChange bekommt direkt den neuen Wert).
  */
-export default function SearchableSelect({ options, value, onChange, placeholder = "– auswählen –", emptyLabel }) {
+export default function SearchableSelect({ options, value, onChange, placeholder = "– select –", emptyLabel }) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
   const containerRef = useRef(null);
@@ -85,7 +85,7 @@ export default function SearchableSelect({ options, value, onChange, placeholder
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Suchen…"
+            placeholder="Search…"
             style={{
               margin: 6,
               padding: "6px 8px",

@@ -7,21 +7,21 @@ import { getEffectiveFacts } from "../lib/build-model";
 function factParts(f) {
   switch (f.type) {
     case "Damage":
-      return { label: "Schaden", value: `${f.hit_count}× Treffer, Koeff. ${f.dmg_multiplier}` };
+      return { label: "Damage", value: `${f.hit_count}× hit, coeff. ${f.dmg_multiplier}` };
     case "Time":
-      return { label: f.text || "Dauer", value: `${f.duration}s` };
+      return { label: f.text || "Duration", value: `${f.duration}s` };
     case "Distance":
-      return { label: f.text || "Distanz", value: `${f.distance}` };
+      return { label: f.text || "Distance", value: `${f.distance}` };
     case "Number":
-      return { label: f.text || "Wert", value: `${f.value}` };
+      return { label: f.text || "Value", value: `${f.value}` };
     case "Recharge":
-      return { label: "Abklingzeit", value: `${f.value}s` };
+      return { label: "Recharge", value: `${f.value}s` };
     case "Buff":
       return { label: f.status, value: `${f.duration ? f.duration + "s" : ""}${f.apply_count > 1 ? " ×" + f.apply_count : ""}` };
     case "ComboField":
-      return { label: "Kombo-Feld", value: f.field_type };
+      return { label: "Combo Field", value: f.field_type };
     case "Percent":
-      return { label: f.text || "Anteil", value: `${f.percent}%` };
+      return { label: f.text || "Amount", value: `${f.percent}%` };
     case "AttributeAdjust":
       return { label: f.text || f.target, value: `${f.value}` };
     default:
@@ -64,7 +64,7 @@ function SkillCard({ skill, activeTraitIds, traitsById }) {
         {combined.map((c, i) => (
           <FactLine key={i} base={c.base} effective={c.effective} changed={c.changed} />
         ))}
-        {traitedBy.length > 0 && <div className="traited-note">✦ Verändert durch: {traitedBy.join(", ")}</div>}
+        {traitedBy.length > 0 && <div className="traited-note">✦ Modified by: {traitedBy.join(", ")}</div>}
       </div>
     </div>
   );

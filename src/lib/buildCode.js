@@ -23,9 +23,9 @@ const CODE_TO_PROFESSION = Object.fromEntries(Object.entries(PROFESSION_CODES).m
 export function peekProfessionFromCode(code) {
   const trimmed = code.trim().replace(/^\[&/, "").replace(/\]$/, "");
   const bytes = base64ToBytes(trimmed);
-  if (bytes.length < 2 || bytes[0] !== 0x0d) throw new Error("Das ist kein GW2-Build-Template-Code.");
+  if (bytes.length < 2 || bytes[0] !== 0x0d) throw new Error("This is not a GW2 build template code.");
   const professionId = CODE_TO_PROFESSION[bytes[1]];
-  if (!professionId) throw new Error("Unbekannter Klassen-Code im Build-Code.");
+  if (!professionId) throw new Error("Unknown profession code in build code.");
   return professionId;
 }
 
@@ -59,7 +59,7 @@ function buildPaletteMaps(paletteEntries) {
  */
 export function encodeBuildCode(build, professionData, paletteMap) {
   const profCode = PROFESSION_CODES[build.professionId];
-  if (!profCode) throw new Error("Unbekannte Klasse für Build-Code.");
+  if (!profCode) throw new Error("Unknown profession for build code.");
 
   const profKey = Object.keys(paletteMap).find((k) => k.toLowerCase() === build.professionId);
   const { skillToPalette } = buildPaletteMaps(paletteMap[profKey]?.skillsByPalette || []);
@@ -117,17 +117,17 @@ export function decodeBuildCode(code, professionDataByProfession, paletteMap) {
   try {
     bytes = base64ToBytes(trimmed);
   } catch {
-    throw new Error("Ungültiger Build-Code (kein lesbares Base64).");
+    throw new Error("Invalid build code (unreadable Base64).");
   }
   if (bytes.length < 44 || bytes[0] !== 0x0d) {
-    throw new Error("Das ist kein GW2-Build-Template-Code (falscher Typ oder zu kurz).");
+    throw new Error("This is not a GW2 build template code (wrong type or too short).");
   }
   const professionId = CODE_TO_PROFESSION[bytes[1]];
-  if (!professionId) throw new Error("Unbekannter Klassen-Code im Build-Code.");
+  if (!professionId) throw new Error("Unknown profession code in build code.");
 
   const professionData = professionDataByProfession[professionId];
   if (!professionData) {
-    throw new Error(`Daten für ${professionId} sind noch nicht geladen - bitte kurz warten und erneut versuchen.`);
+    throw new Error(`Data for ${professionId} is not loaded yet - please wait a moment and try again.`);
   }
   const allSpecs = [...professionData.specializations.core, ...professionData.specializations.elite];
   const specById = new Map(allSpecs.map((s) => [s.id, s]));

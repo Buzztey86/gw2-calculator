@@ -16,7 +16,7 @@ export default function AvailableBuffsPanel({ availableBuffs, effects }) {
   const filtered = availableBuffs.filter((b) => !isCondition(b.status, effects));
 
   if (filtered.length === 0) {
-    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Keine der aktiven Talente gewähren aktuell einen Segen/Effekt.</div>;
+    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>None of the active traits currently grant a boon/effect.</div>;
   }
 
   return (

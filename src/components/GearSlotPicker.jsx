@@ -60,7 +60,7 @@ export default function GearSlotPicker({
   const comboOptions = combos.map((c) => ({ value: c, label: `${c} (${STAT_COMBO_ROLE[c]})` }));
   const comboOptionsPlain = combos.map((c) => ({ value: c, label: c }));
   const slotCount = totalInfusionSlots(rarity, weaponSetup);
-  const sigilSlotLabels = weaponSetup === "2h" ? ["Sigill 1", "Sigill 2"] : ["Sigill (Haupthand)", "Sigill (Nebenhand)"];
+  const sigilSlotLabels = weaponSetup === "2h" ? ["Sigil 1", "Sigil 2"] : ["Sigil (Main Hand)", "Sigil (Off-Hand)"];
 
   function handleSlotChange(slotKey, prefixName) {
     setSlotSelections({ ...slotSelections, [slotKey]: prefixName });
@@ -103,9 +103,9 @@ export default function GearSlotPicker({
 
   return (
     <div>
-      <Section title="Ausrüstung (Mix & Match pro Slot)" defaultOpen>
+      <Section title="Equipment (Mix & Match per Slot)" defaultOpen>
         <div className="label" style={{ marginBottom: 6 }}>
-          Qualität
+          Quality
         </div>
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <button className={`weapon-tab ${rarity === "exotic" ? "active" : ""}`} onClick={() => setRarity("exotic")}>
@@ -117,32 +117,32 @@ export default function GearSlotPicker({
         </div>
 
         <div className="label" style={{ marginBottom: 6 }}>
-          Waffen-Setup
+          Weapon Setup
         </div>
         <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
           <button
             className={`weapon-tab ${weaponSetup === "2h" ? "active" : ""}`}
             onClick={() => handleWeaponSetupChange("2h")}
           >
-            Zweihand-Waffe
+            Two-Handed Weapon
           </button>
           <button
             className={`weapon-tab ${weaponSetup === "1h+1h" ? "active" : ""}`}
             onClick={() => handleWeaponSetupChange("1h+1h")}
           >
-            2× Einhand-Waffen
+            2× One-Handed Weapons
           </button>
         </div>
 
         <div className="label" style={{ marginBottom: 6 }}>
-          Schnellauswahl (alle Slots auf einmal setzen)
+          Quick Select (set all slots at once)
         </div>
         <div style={{ marginBottom: 20 }}>
-          <SearchableSelect options={comboOptions} value="" onChange={handleQuickFill} placeholder="– komplettes Set wählen –" />
+          <SearchableSelect options={comboOptions} value="" onChange={handleQuickFill} placeholder="– select full set –" />
         </div>
 
         <div className="label" style={{ marginBottom: 10 }}>
-          Einzelne Slots (Mix & Match)
+          Individual Slots (Mix & Match)
         </div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 12px" }}>
           {slots.map((slot) => (
@@ -152,14 +152,14 @@ export default function GearSlotPicker({
                 options={comboOptionsPlain}
                 value={slotSelections[slot.key] || ""}
                 onChange={(v) => handleSlotChange(slot.key, v)}
-                emptyLabel="– keine –"
+                emptyLabel="– none –"
               />
             </div>
           ))}
         </div>
       </Section>
 
-      <Section title="Waffen-Upgrades" subtitle={`${sigilOptions.length} Sigille · ${relicOptions.length} Relics verfügbar`}>
+      <Section title="Weapon Upgrades" subtitle={`${sigilOptions.length} sigils · ${relicOptions.length} relics available`}>
         {sigilSlotLabels.map((label, i) => (
           <div key={label} style={{ marginBottom: 12 }}>
             <div className="label" style={{ marginBottom: 6 }}>
@@ -169,7 +169,7 @@ export default function GearSlotPicker({
               options={sigilSelectOptions}
               value={selectedSigils[i] ? String(selectedSigils[i]) : ""}
               onChange={(v) => handleSigilChange(i, v)}
-              emptyLabel="– kein Sigill –"
+              emptyLabel="– no sigil –"
             />
             {selectedSigils[i] && (
               <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>
@@ -186,7 +186,7 @@ export default function GearSlotPicker({
           options={relicSelectOptions}
           value={selectedRelic ? String(selectedRelic) : ""}
           onChange={(v) => setSelectedRelic(v ? Number(v) : null)}
-          emptyLabel="– kein Relic –"
+          emptyLabel="– no relic –"
         />
         {selectedRelic && (
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>
@@ -194,61 +194,61 @@ export default function GearSlotPicker({
           </div>
         )}
         <div style={{ fontSize: 10, color: "var(--text-faint)", marginTop: 8 }}>
-          Sigill-/Relic-Effekte sind meist Trigger-Effekte (bei Krit, Waffenwechsel, Skill-Nutzung …) und fließen
-          nicht in die Attribut-Rechnung ein – nur die Rune und Infusionen liefern permanente Stat-Boni.
+          Sigil/relic effects are mostly trigger effects (on crit, weapon swap, skill use …) and are not
+          included in the attribute calculation – only the rune and infusions provide permanent stat bonuses.
         </div>
       </Section>
 
-      <Section title="Rune" subtitle={`alle ${runeOptions.length} Superior Runes, 6-teiliger Bonus`}>
+      <Section title="Rune" subtitle={`all ${runeOptions.length} Superior Runes, 6-piece bonus`}>
         <SearchableSelect
           options={runeSelectOptions}
           value={selectedRune || ""}
           onChange={(v) => setSelectedRune(v || null)}
-          emptyLabel="– keine Rune –"
+          emptyLabel="– no rune –"
         />
         {selectedRuneObj && (
           <div style={{ display: "flex", gap: 8, marginTop: 8, alignItems: "flex-start" }}>
             <Icon src={selectedRuneObj.icon} size={28} />
             <div>
               <div style={{ fontSize: 11.5, color: "var(--positive)", fontWeight: 600 }}>
-                6er-Bonus gesamt: {summarizeRuneBonus(selectedRuneObj.statBonuses) || "kein Attribut-Bonus"}
+                Total 6-piece bonus: {summarizeRuneBonus(selectedRuneObj.statBonuses) || "no attribute bonus"}
               </div>
               <div style={{ fontSize: 10, color: "var(--text-faint)", marginTop: 2 }}>
-                Einzelstufen: {(selectedRuneObj.statBonuses || []).join(" · ")}
+                Individual tiers: {(selectedRuneObj.statBonuses || []).join(" · ")}
               </div>
             </div>
           </div>
         )}
       </Section>
 
-      <Section title="Infusionen" subtitle="WvW-Infusionen (reine Stats, keine Agony Resistance nötig)">
+      <Section title="Infusions" subtitle="WvW infusions (pure stats, no Agony Resistance needed)">
         {slotCount === 0 ? (
-          <div style={{ fontSize: 11.5, color: "var(--text-faint)" }}>Keine Infusionssockel bei dieser Auswahl verfügbar.</div>
+          <div style={{ fontSize: 11.5, color: "var(--text-faint)" }}>No infusion slots available for this selection.</div>
         ) : (
           <>
-            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>{slotCount} Sockel verfügbar</div>
+            <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>{slotCount} slots available</div>
             <SearchableSelect
               options={infusionSelectOptions}
               value={selectedInfusion ? String(selectedInfusion) : ""}
               onChange={(v) => setSelectedInfusion(v ? Number(v) : null)}
-              emptyLabel="– keine Infusion –"
+              emptyLabel="– no infusion –"
             />
             <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 6 }}>
-              Wird auf alle {slotCount} verfügbaren Sockel angewendet (vereinfachtes Modell).
+              Applied to all {slotCount} available slots (simplified model).
             </div>
           </>
         )}
       </Section>
 
-      <Section title="Nahrung & Utility" subtitle={`${foodOptions.length} Foods · ${utilityOptions.length} Utilities, alle WvW-nutzbar`}>
+      <Section title="Food & Utility" subtitle={`${foodOptions.length} foods · ${utilityOptions.length} utilities, all usable in WvW`}>
         <div className="label" style={{ marginBottom: 6 }}>
-          Nahrung (Food)
+          Food
         </div>
         <SearchableSelect
           options={foodSelectOptions}
           value={selectedFood ? String(selectedFood) : ""}
           onChange={(v) => setSelectedFood(v ? Number(v) : null)}
-          emptyLabel="– keine Nahrung –"
+          emptyLabel="– no food –"
         />
         {selectedFood && (
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4, marginBottom: 16 }}>
@@ -257,13 +257,13 @@ export default function GearSlotPicker({
         )}
 
         <div className="label" style={{ marginBottom: 6, marginTop: selectedFood ? 0 : 16 }}>
-          Utility (Öl/Stein/Kristall)
+          Utility (Oil/Stone/Crystal)
         </div>
         <SearchableSelect
           options={utilitySelectOptions}
           value={selectedUtility ? String(selectedUtility) : ""}
           onChange={(v) => setSelectedUtility(v ? Number(v) : null)}
-          emptyLabel="– kein Utility-Konsumgut –"
+          emptyLabel="– no utility consumable –"
         />
         {selectedUtility && (
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>

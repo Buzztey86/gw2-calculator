@@ -102,10 +102,10 @@ export default function App() {
       const profLabel = PROFESSION_LIST.find((p) => p.id === professionId)?.name || professionId;
       setImportStatus({
         ok: true,
-        message: `Import erfolgreich: ${profLabel}${decoded.eliteSpec ? " · " + decoded.eliteSpec : ""}, ${decoded.lines.length} Talentlinien, Heal-/Utility-/Elite-Skills übernommen.`,
+        message: `Import successful: ${profLabel}${decoded.eliteSpec ? " · " + decoded.eliteSpec : ""}, ${decoded.lines.length} trait lines, heal/utility/elite skills applied.`,
       });
     } catch (err) {
-      setImportStatus({ ok: false, message: "Import fehlgeschlagen: " + err.message });
+      setImportStatus({ ok: false, message: "Import failed: " + err.message });
     }
     initializedProfessionRef.current = professionId;
     setPendingImportCode(null);
@@ -197,30 +197,27 @@ export default function App() {
   return (
     <div className="app-shell">
       <div className="header">
-        <div className="label" style={{ color: "var(--accent)", marginBottom: 6 }}>
-          Guild Wars 2 · Gilden-Build-Tool (lokale Vorschau)
-        </div>
-        <h1>Charakter-Build-Rechner</h1>
+        <h1>Character Build Calculator</h1>
         <p>
-          Talente, Waffenfähigkeiten und Ausrüstungs-Stats auf Basis echter Guild-Wars-2-Daten. Die Seitenleiste
-          zeigt Stats & Buffs immer live, egal welchen Reiter du gerade bearbeitest.
+          Traits, weapon skills, and gear stats based on real Guild Wars 2 data. The sidebar always shows live
+          stats & buffs, no matter which tab you're currently editing.
         </p>
       </div>
 
       <ProfessionPicker selected={professionId} onSelect={setProfessionId} professionIcons={professionIcons} />
 
-      {loading && !displayData && <div className="loading">Lade {professionId}-Daten…</div>}
-      {error && <div className="error-box">Fehler: {error}</div>}
+      {loading && !displayData && <div className="loading">Loading {professionId} data…</div>}
+      {error && <div className="error-box">Error: {error}</div>}
 
       {displayData && (
         <div className="main-layout" style={{ opacity: isSwitchingProfession ? 0.5 : 1, transition: "opacity 0.15s" }}>
           <div className="main-content">
             <div className="tabs">
               <button className={`tab-btn ${tab === "talente" ? "active" : ""}`} onClick={() => setTab("talente")}>
-                Talente & Skills
+                Traits & Skills
               </button>
               <button className={`tab-btn ${tab === "ausruestung" ? "active" : ""}`} onClick={() => setTab("ausruestung")}>
-                Ausrüstung
+                Equipment
               </button>
               <button className={`tab-btn ${tab === "utilities" ? "active" : ""}`} onClick={() => setTab("utilities")}>
                 Utilities & Buffs
@@ -239,7 +236,7 @@ export default function App() {
                 <div className="grid-cols grid-2">
                   <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
                     <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
-                      Talente (3-Linien-System)
+                      Traits (3-Line System)
                     </div>
                     <TraitLinePicker
                       professionData={displayData}
@@ -259,13 +256,13 @@ export default function App() {
                         className={`weapon-tab ${skillTab === "waffen" ? "active" : ""}`}
                         onClick={() => setSkillTab("waffen")}
                       >
-                        Waffenfähigkeiten
+                        Weapon Skills
                       </button>
                       <button
                         className={`weapon-tab ${skillTab === "utility" ? "active" : ""}`}
                         onClick={() => setSkillTab("utility")}
                       >
-                        Utility-Skills
+                        Utility Skills
                       </button>
                     </div>
                     {skillTab === "waffen" ? (
@@ -291,7 +288,7 @@ export default function App() {
             {tab === "ausruestung" && (
               <div className="panel">
                 <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
-                  Ausrüstung
+                  Equipment
                 </div>
                 <GearSlotPicker
                   weaponSetup={weaponSetup}
@@ -343,7 +340,7 @@ export default function App() {
       )}
 
       <div className="footer-note">
-        Lokale Vorschau · Daten aus der offiziellen Guild Wars 2 API · gw2-buildtool
+        Local preview · Data from the official Guild Wars 2 API · gw2-buildtool
       </div>
     </div>
   );

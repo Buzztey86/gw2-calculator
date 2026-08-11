@@ -4,7 +4,7 @@ import { getEffectiveFacts } from "../lib/build-model";
 function factText(f) {
   switch (f.type) {
     case "Damage":
-      return `Schaden: ${f.hit_count}× Treffer, Koeff. ${f.dmg_multiplier}`;
+      return `Damage: ${f.hit_count}× hit, coeff. ${f.dmg_multiplier}`;
     case "Time":
       return `${f.text}: ${f.duration}s`;
     case "Distance":
@@ -12,11 +12,11 @@ function factText(f) {
     case "Number":
       return `${f.text}: ${f.value}`;
     case "Recharge":
-      return `Abklingzeit: ${f.value}s`;
+      return `Recharge: ${f.value}s`;
     case "Buff":
       return `${f.status}${f.duration ? ` (${f.duration}s)` : ""}${f.apply_count > 1 ? ` ×${f.apply_count}` : ""}`;
     case "ComboField":
-      return `Kombo-Feld: ${f.field_type}`;
+      return `Combo Field: ${f.field_type}`;
     case "Percent":
       return `${f.text}: ${f.percent}%`;
     case "AttributeAdjust":
@@ -94,7 +94,7 @@ export default function UtilitySkillPicker({
   return (
     <div>
       <div className="label" style={{ color: "var(--accent)", marginBottom: 6 }}>
-        Heilskill (1 von {heal.length})
+        Heal Skill (1 of {heal.length})
       </div>
       <div style={{ marginBottom: 16 }}>
         {heal.map((s) => (
@@ -110,7 +110,7 @@ export default function UtilitySkillPicker({
       </div>
 
       <div className="label" style={{ color: "var(--accent)", marginBottom: 6 }}>
-        Utility-Skills ({selectedUtilities.length}/3 von {utility.length})
+        Utility Skills ({selectedUtilities.length}/3 of {utility.length})
       </div>
       <div style={{ marginBottom: 16 }}>
         {utility.map((s) => (
@@ -126,7 +126,7 @@ export default function UtilitySkillPicker({
       </div>
 
       <div className="label" style={{ color: "var(--accent)", marginBottom: 6 }}>
-        Elite-Skill (1 von {elite.length})
+        Elite Skill (1 of {elite.length})
       </div>
       <div>
         {elite.map((s) => (

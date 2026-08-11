@@ -30,7 +30,7 @@ function TraitTierGrid({ spec, selectedIds, onToggle }) {
         {spec.traits
           .filter((t) => t.slot === "Minor")
           .map((t) => (
-            <div key={t.id} title={`${t.name} (automatisch aktiv): ${t.description}`}>
+            <div key={t.id} title={`${t.name} (automatically active): ${t.description}`}>
               <Icon src={t.icon} size={18} />
             </div>
           ))}
@@ -85,13 +85,13 @@ export default function TraitLinePicker({
     <div>
       <div style={{ marginBottom: 14 }}>
         <div className="label" style={{ marginBottom: 6 }}>
-          Elite-Spezialisierung
+          Elite Specialization
         </div>
         <SearchableSelect
           options={elite.map((s) => ({ value: s.name, label: s.name, icon: s.icon }))}
           value={eliteSpec || ""}
           onChange={handleEliteChange}
-          emptyLabel="Keine (nur Core-Linien)"
+          emptyLabel="None (Core lines only)"
         />
       </div>
 
@@ -102,7 +102,7 @@ export default function TraitLinePicker({
           ))}
         </div>
       )}
-      {validation.valid && <div className="valid-box">✓ Build gültig</div>}
+      {validation.valid && <div className="valid-box">✓ Build valid</div>}
 
       {[0, 1, 2].map((slotIndex) => {
         const lineId = lines[slotIndex];
@@ -112,14 +112,14 @@ export default function TraitLinePicker({
         return (
           <div key={slotIndex} className="line-select-row">
             <span className="label" style={{ minWidth: 60 }}>
-              Linie {slotIndex + 1}
+              Line {slotIndex + 1}
             </span>
             <div style={{ flex: 1 }}>
               <SearchableSelect
                 options={lineOptions}
                 value={lineId ? String(lineId) : ""}
                 onChange={(v) => handleLineChange(slotIndex, v ? Number(v) : null)}
-                emptyLabel="– wählen –"
+                emptyLabel="– select –"
               />
             </div>
           </div>

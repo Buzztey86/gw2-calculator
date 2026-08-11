@@ -2,14 +2,14 @@ import { useState } from "react";
 import Icon from "./Icon";
 
 const UTILITY_CATEGORY_LABELS = {
-  stealthField: "Stealth-Feld (Gruppe)",
-  massStealth: "Mass-Stealth",
-  groupStability: "Gruppen-Stability",
-  instantRevive: "Instant-Wiederbelebung",
-  stompFinisher: "Downed-Finisher / Instant-Kill",
+  stealthField: "Stealth Field (Group)",
+  massStealth: "Mass Stealth",
+  groupStability: "Group Stability",
+  instantRevive: "Instant Revive",
+  stompFinisher: "Downed Finisher / Instant Kill",
 };
 
-const KIND_LABEL = { skill: "Skill", trait: "Talent", rune: "Rune", food: "Food" };
+const KIND_LABEL = { skill: "Skill", trait: "Trait", rune: "Rune", food: "Food" };
 
 function Checkbox({ checked }) {
   return (
@@ -45,7 +45,7 @@ function ProviderList({ providers, filterText }) {
     : providers;
 
   if (!filtered || filtered.length === 0) {
-    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Keine Einträge gefunden.</div>;
+    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>No entries found.</div>;
   }
   const byProf = {};
   for (const p of filtered) {
@@ -71,7 +71,7 @@ function ProviderList({ providers, filterText }) {
                 <div style={{ fontSize: 10.5, color: "var(--text-muted)" }}>{item.description}</div>
                 {item.matchedFilters && item.matchedFilters.length > 0 && (
                   <div style={{ fontSize: 9.5, color: "var(--text-faint)", marginTop: 2 }}>
-                    erfüllt: {item.matchedFilters.join(", ")}
+                    satisfies: {item.matchedFilters.join(", ")}
                   </div>
                 )}
               </div>
@@ -149,7 +149,7 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
     <div className="grid-cols" style={{ gridTemplateColumns: "1fr 2fr" }}>
       <div className="panel">
         <div className="label" style={{ color: "var(--accent)", marginBottom: 10 }}>
-          Utility-Kategorien
+          Utility Categories
         </div>
         {Object.keys(UTILITY_CATEGORY_LABELS).map((key) => (
           <button
@@ -186,17 +186,17 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
           <div className="label" style={{ color: "var(--accent)" }}>
             {selectedItems.length === 0
-              ? "Auswahl links treffen"
+              ? "Select on the left"
               : selectedItems.length === 1
-              ? `${labelFor(selectedItems[0])} · ${combinedResults.length} Einträge`
-              : `${selectedItems.length} Filter (UND-verknüpft) · ${combinedResults.length} Treffer`}
+              ? `${labelFor(selectedItems[0])} · ${combinedResults.length} entries`
+              : `${selectedItems.length} filters (AND-combined) · ${combinedResults.length} matches`}
           </div>
           {selectedItems.length > 0 && (
             <button
               onClick={() => setSelectedItems([])}
               style={{ background: "none", border: "none", color: "var(--text-muted)", fontSize: 11.5, cursor: "pointer", padding: 0 }}
             >
-              Auswahl leeren
+              Clear selection
             </button>
           )}
         </div>
@@ -226,7 +226,7 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
             {combinedResults.length > 8 && (
               <input
                 type="text"
-                placeholder="Nach Name oder Klasse filtern…"
+                placeholder="Filter by name or profession…"
                 value={filterText}
                 onChange={(e) => setFilterText(e.target.value)}
                 className="select"
@@ -236,16 +236,16 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
             <ProviderList providers={combinedResults} filterText={filterText} />
             {selectedItems.length > 1 && combinedResults.length === 0 && (
               <div style={{ fontSize: 11.5, color: "var(--text-faint)", marginTop: 8 }}>
-                Keine Klasse bietet alle {selectedItems.length} gewählten Filter gleichzeitig an (auch nicht über
-                unterschiedliche Fähigkeiten).
+                No profession offers all {selectedItems.length} selected filters at once (not even across
+                different skills).
               </div>
             )}
           </>
         ) : (
           <div style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
-            Wähle links eine oder mehrere Utility-Kategorien bzw. Boons. Bei mehreren Auswahlen werden alle Klassen
-            gezeigt, die <strong>jeden</strong> gewählten Filter irgendwie abdecken (auch über verschiedene
-            Fähigkeiten hinweg) – inklusive der jeweils passenden Skills/Talente.
+            Select one or more utility categories or boons on the left. With multiple selections, every profession
+            that covers <strong>each</strong> selected filter in some way is shown (even across different skills) –
+            including the matching skills/traits for each.
           </div>
         )}
       </div>

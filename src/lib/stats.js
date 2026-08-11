@@ -51,29 +51,29 @@ export function infusionSlotsByType(rarity) {
 // Jeder einzelne Ausrüstungsplatz mit Anzeige-Name + zugehörigem Budget-Typ.
 // weaponMain/weaponOff hängen vom gewählten Waffen-Setup ab (siehe getWeaponSlots).
 export const ARMOR_TRINKET_SLOTS = [
-  { key: "head", label: "Kopf", budgetType: "minorArmor" },
-  { key: "shoulders", label: "Schultern", budgetType: "minorArmor" },
-  { key: "chest", label: "Brust", budgetType: "chest" },
-  { key: "gloves", label: "Hände", budgetType: "minorArmor" },
-  { key: "leggings", label: "Beine", budgetType: "leggings" },
-  { key: "boots", label: "Füße", budgetType: "minorArmor" },
-  { key: "amulet", label: "Amulett", budgetType: "amulet" },
+  { key: "head", label: "Head", budgetType: "minorArmor" },
+  { key: "shoulders", label: "Shoulders", budgetType: "minorArmor" },
+  { key: "chest", label: "Chest", budgetType: "chest" },
+  { key: "gloves", label: "Hands", budgetType: "minorArmor" },
+  { key: "leggings", label: "Legs", budgetType: "leggings" },
+  { key: "boots", label: "Feet", budgetType: "minorArmor" },
+  { key: "amulet", label: "Amulet", budgetType: "amulet" },
   { key: "ring1", label: "Ring 1", budgetType: "ring" },
   { key: "ring2", label: "Ring 2", budgetType: "ring" },
-  { key: "accessory1", label: "Schmuckstück 1", budgetType: "accessory" },
-  { key: "accessory2", label: "Schmuckstück 2", budgetType: "accessory" },
-  { key: "backitem", label: "Rückenitem", budgetType: "backitem" },
+  { key: "accessory1", label: "Accessory 1", budgetType: "accessory" },
+  { key: "accessory2", label: "Accessory 2", budgetType: "accessory" },
+  { key: "backitem", label: "Back Item", budgetType: "backitem" },
 ];
 
 export function getWeaponSlots(setup) {
   // setup: "2h" oder "1h+1h"
   if (setup === "1h+1h") {
     return [
-      { key: "weaponMain", label: "Waffe (Haupthand)", budgetType: "weapon1h" },
-      { key: "weaponOff", label: "Waffe (Nebenhand)", budgetType: "weapon1h" },
+      { key: "weaponMain", label: "Weapon (Main Hand)", budgetType: "weapon1h" },
+      { key: "weaponOff", label: "Weapon (Off-Hand)", budgetType: "weapon1h" },
     ];
   }
-  return [{ key: "weaponMain", label: "Waffe (Zweihand)", budgetType: "weapon2h" }];
+  return [{ key: "weaponMain", label: "Weapon (Two-Handed)", budgetType: "weapon2h" }];
 }
 
 export function getAllSlots(weaponSetup) {
@@ -137,11 +137,11 @@ export const STAT_COMBO_ROLE = {
   "Dragon's": "Power DPS (+Vitality)", "Cavalier's": "Power DPS (tanky)", "Knight's": "Power DPS (tanky)",
   "Soldier's": "Power Survival", "Crusader": "Power Hybrid-Heal",
   "Viper's": "Condition Hybrid", "Sinister": "Condition DPS", "Grieving": "Condition Hybrid",
-  "Rampager's": "Condition Hybrid (älter)", "Trailblazer's": "Condition Survival", "Dire": "Condition Survival",
+  "Rampager's": "Condition Hybrid (older)", "Trailblazer's": "Condition Survival", "Dire": "Condition Survival",
   "Minstrel's": "Heal-Support", "Harrier's": "Quickness/Alacrity-DPS-Support", "Diviner's": "Quickness/Alacrity-DPS",
-  "Ritualist's": "Condition-Support", "Commander's": "Tanky Boon-Support", "Cleric's": "Heal (älter)",
-  "Magi's": "Heal (älter)", "Nomad's": "Reiner Tank",
-  "Celestial": "Generalist (alle Attribute)",
+  "Ritualist's": "Condition-Support", "Commander's": "Tanky Boon-Support", "Cleric's": "Heal (older)",
+  "Magi's": "Heal (older)", "Nomad's": "Pure Tank",
+  "Celestial": "Generalist (all attributes)",
 };
 
 export function computeGearAttributesFromSlots(slotSelections, weaponSetup, rarity = "exotic") {

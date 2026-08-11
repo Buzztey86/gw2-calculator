@@ -20,9 +20,9 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
   async function handleCopy() {
     try {
       await navigator.clipboard.writeText(exportValue);
-      setCopyStatus("Kopiert!");
+      setCopyStatus("Copied!");
     } catch {
-      setCopyStatus("Kopieren fehlgeschlagen — bitte manuell markieren.");
+      setCopyStatus("Copy failed — please select manually.");
     }
   }
 
@@ -39,11 +39,11 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
   return (
     <div className="panel" style={{ marginBottom: 16 }}>
       <div className="label" style={{ color: "var(--accent)", marginBottom: 4 }}>
-        Build-Code (echtes GW2-Chat-Link-Format, Typ 0x0D)
+        Build Code (real GW2 chat link format, type 0x0D)
       </div>
       <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginBottom: 10 }}>
-        Kompatibel mit dem Spiel/gw2skills.net für Klasse, Talente und Heal-/Utility-/Elite-Skills. Ranger-Pets,
-        Revenant-Legenden und Waffenauswahl sind (noch) nicht Teil dieses Tools und werden nicht kodiert.
+        Compatible with the game/gw2skills.net for profession, traits, and heal/utility/elite skills. Ranger pets,
+        Revenant legends, and weapon selection are not (yet) part of this tool and are not encoded.
       </div>
       {importStatus && (
         <div
@@ -63,9 +63,9 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
       )}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>
-          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 6 }}>Exportieren</div>
+          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 6 }}>Export</div>
           <button className="weapon-tab" onClick={handleExport} style={{ marginBottom: 6 }}>
-            Code erzeugen
+            Generate Code
           </button>
           {exportValue && (
             <>
@@ -90,7 +90,7 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
                 onClick={handleCopy}
                 style={{ marginTop: 6, background: "none", border: "none", color: "var(--accent)", fontSize: 11, cursor: "pointer", padding: 0 }}
               >
-                In Zwischenablage kopieren
+                Copy to clipboard
               </button>
             </>
           )}
@@ -98,11 +98,11 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
         </div>
 
         <div>
-          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 6 }}>Importieren</div>
+          <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 6 }}>Import</div>
           <textarea
             value={importValue}
             onChange={(e) => setImportValue(e.target.value)}
-            placeholder="[&DQ…] hier einfügen"
+            placeholder="[&DQ…] paste here"
             rows={2}
             style={{
               width: "100%",
@@ -118,7 +118,7 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
             }}
           />
           <button className="weapon-tab" onClick={handleImport} disabled={!importValue.trim()}>
-            Übernehmen
+            Apply
           </button>
           {importError && <div style={{ fontSize: 11, color: "var(--negative)", marginTop: 6 }}>{importError}</div>}
         </div>
