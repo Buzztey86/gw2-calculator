@@ -34,12 +34,12 @@ function FactLine({ base, effective, changed }) {
   const effParts = factParts(effective);
   return (
     <div className="fact-line">
-      <span style={{ color: "var(--ink-dim)" }}>{effParts.label}: </span>
+      <span style={{ color: "var(--text-muted)" }}>{effParts.label}: </span>
       {changed ? (
         <>
-          <span style={{ textDecoration: "line-through", color: "var(--ink-dim)" }}>{baseParts.value}</span>
-          <span style={{ color: "var(--ink-dim)" }}> → </span>
-          <span style={{ color: "var(--gold)", fontWeight: 600 }}>{effParts.value}</span>
+          <span style={{ textDecoration: "line-through", color: "var(--text-muted)" }}>{baseParts.value}</span>
+          <span style={{ color: "var(--text-muted)" }}> → </span>
+          <span style={{ color: "var(--accent)", fontWeight: 600 }}>{effParts.value}</span>
         </>
       ) : (
         <span>{effParts.value}</span>

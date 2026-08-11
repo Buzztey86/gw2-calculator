@@ -16,7 +16,7 @@ export default function AvailableBuffsPanel({ availableBuffs, effects }) {
   const filtered = availableBuffs.filter((b) => !isCondition(b.status, effects));
 
   if (filtered.length === 0) {
-    return <div style={{ fontSize: 12, color: "var(--ink-dim)" }}>Keine der aktiven Talente gewähren aktuell einen Segen/Effekt.</div>;
+    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Keine der aktiven Talente gewähren aktuell einen Segen/Effekt.</div>;
   }
 
   return (
@@ -25,17 +25,17 @@ export default function AvailableBuffsPanel({ availableBuffs, effects }) {
         const meta = findEffectMeta(status, effects);
         const isStandardBoon = effects?.boons.some((b) => b.name === status);
         return (
-          <div key={status} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--line)" }}>
+          <div key={status} style={{ display: "flex", gap: 8, padding: "6px 0", borderBottom: "1px solid var(--border)" }}>
             <Icon src={meta?.icon} size={26} />
             <div style={{ flex: 1 }}>
-              <div style={{ fontSize: 12.5, color: isStandardBoon ? "var(--gold)" : "var(--ink)", fontWeight: 600 }}>
+              <div style={{ fontSize: 12.5, color: isStandardBoon ? "var(--accent)" : "var(--text)", fontWeight: 600 }}>
                 {status}
-                {isStandardBoon && <span style={{ color: "var(--ink-dim)", fontWeight: 400 }}> (Boon)</span>}
+                {isStandardBoon && <span style={{ color: "var(--text-muted)", fontWeight: 400 }}> (Boon)</span>}
               </div>
-              <div style={{ fontSize: 10.5, color: "var(--ink-dim)" }}>
+              <div style={{ fontSize: 10.5, color: "var(--text-muted)" }}>
                 {meta?.description || fact.description || ""}
               </div>
-              <div style={{ fontSize: 10, color: "var(--teal)", marginTop: 2 }}>via {sources.join(", ")}</div>
+              <div style={{ fontSize: 10, color: "var(--accent)", marginTop: 2 }}>via {sources.join(", ")}</div>
             </div>
           </div>
         );

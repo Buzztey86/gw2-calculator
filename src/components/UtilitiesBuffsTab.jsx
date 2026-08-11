@@ -21,7 +21,7 @@ function ProviderList({ providers, filterText }) {
     : providers;
 
   if (!filtered || filtered.length === 0) {
-    return <div style={{ fontSize: 12, color: "var(--ink-dim)" }}>Keine Einträge gefunden.</div>;
+    return <div style={{ fontSize: 12, color: "var(--text-muted)" }}>Keine Einträge gefunden.</div>;
   }
   // nach Klasse gruppieren
   const byProf = {};
@@ -32,20 +32,20 @@ function ProviderList({ providers, filterText }) {
     <div>
       {Object.entries(byProf).map(([prof, items]) => (
         <div key={prof} style={{ marginBottom: 14 }}>
-          <div style={{ fontSize: 13, color: "var(--gold)", fontWeight: 600, marginBottom: 6 }}>
-            {prof} <span style={{ color: "var(--ink-dim)", fontWeight: 400 }}>({items.length})</span>
+          <div style={{ fontSize: 13, color: "var(--accent)", fontWeight: 600, marginBottom: 6 }}>
+            {prof} <span style={{ color: "var(--text-muted)", fontWeight: 400 }}>({items.length})</span>
           </div>
           {items.map((item, i) => (
-            <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", borderBottom: "1px solid var(--line)" }}>
+            <div key={i} style={{ display: "flex", gap: 8, padding: "5px 0", borderBottom: "1px solid var(--border)" }}>
               <Icon src={item.icon} size={26} />
               <div style={{ flex: 1 }}>
-                <div style={{ fontSize: 12.5, color: "var(--ink)" }}>
+                <div style={{ fontSize: 12.5, color: "var(--text)" }}>
                   {item.name}
-                  <span style={{ color: "var(--teal)", fontSize: 10, marginLeft: 6 }}>
+                  <span style={{ color: "var(--accent)", fontSize: 10, marginLeft: 6 }}>
                     {KIND_LABEL[item.kind] || ""} · {item.source}
                   </span>
                 </div>
-                <div style={{ fontSize: 10.5, color: "var(--ink-dim)" }}>{item.description}</div>
+                <div style={{ fontSize: 10.5, color: "var(--text-muted)" }}>{item.description}</div>
               </div>
             </div>
           ))}
@@ -83,7 +83,7 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
   return (
     <div className="grid-cols" style={{ gridTemplateColumns: "1fr 2fr" }}>
       <div className="panel">
-        <div className="label" style={{ color: "var(--gold)", marginBottom: 10 }}>
+        <div className="label" style={{ color: "var(--accent)", marginBottom: 10 }}>
           Utility-Kategorien
         </div>
         {Object.keys(UTILITY_CATEGORY_LABELS).map((key) => (
@@ -94,11 +94,11 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
             style={{ width: "100%", marginBottom: 4, fontSize: 12.5 }}
           >
             {UTILITY_CATEGORY_LABELS[key]}
-            <span style={{ marginLeft: "auto", color: "var(--ink-dim)" }}>{utilityIndex?.[key]?.length ?? 0}</span>
+            <span style={{ marginLeft: "auto", color: "var(--text-muted)" }}>{utilityIndex?.[key]?.length ?? 0}</span>
           </button>
         ))}
 
-        <div className="label" style={{ color: "var(--gold)", margin: "18px 0 10px" }}>
+        <div className="label" style={{ color: "var(--accent)", margin: "18px 0 10px" }}>
           Boons
         </div>
         {boons.map((b) => (
@@ -110,13 +110,13 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
           >
             <Icon src={b.icon} size={20} />
             {b.name}
-            <span style={{ marginLeft: "auto", color: "var(--ink-dim)" }}>{boonProviders?.[b.name]?.length ?? 0}</span>
+            <span style={{ marginLeft: "auto", color: "var(--text-muted)" }}>{boonProviders?.[b.name]?.length ?? 0}</span>
           </button>
         ))}
       </div>
 
-      <div className="panel teal-accent">
-        <div className="label" style={{ color: "var(--teal)", marginBottom: 10 }}>
+      <div className="panel">
+        <div className="label" style={{ color: "var(--accent)", marginBottom: 10 }}>
           {title}
         </div>
         {selected ? (
@@ -134,7 +134,7 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
             <ProviderList providers={providers} filterText={filterText} />
           </>
         ) : (
-          <div style={{ fontSize: 12.5, color: "var(--ink-dim)" }}>
+          <div style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
             Wähle links eine Utility-Kategorie oder einen Boon, um zu sehen, welche Klassen und Fähigkeiten ihn bereitstellen.
           </div>
         )}

@@ -24,7 +24,7 @@ function AttrRow({ attr, gearValue, traitDelta }) {
       <span>
         <span className="value">{Math.round(gearValue)}</span>
         {traitDelta > 0 && (
-          <span className="sub" style={{ color: "var(--green)", fontWeight: 600 }}>
+          <span className="sub" style={{ color: "var(--positive)", fontWeight: 600 }}>
             {" "}
             +{Math.round(traitDelta)}
           </span>
@@ -46,7 +46,7 @@ function DerivedRow({ label, gearOnly, withTraits, unit = "", sub }) {
           {unit}
         </span>
         {changed && (
-          <span style={{ color: "var(--green)", fontWeight: 600, fontSize: 13, marginLeft: 4 }}>
+          <span style={{ color: "var(--positive)", fontWeight: 600, fontSize: 13, marginLeft: 4 }}>
             {delta > 0 ? "+" : ""}
             {delta.toFixed(unit === "%" ? 1 : 0)}
             {unit}
@@ -69,9 +69,9 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
 
   return (
     <div>
-      <div className="label" style={{ marginBottom: 6, color: "var(--gold)" }}>
+      <div className="label" style={{ marginBottom: 6, color: "var(--accent)" }}>
         Rohattribute
-        <span style={{ color: "var(--green)", marginLeft: 8, fontWeight: 400 }}>■ Talent-Bonus</span>
+        <span style={{ color: "var(--positive)", marginLeft: 8, fontWeight: 400 }}>■ Talent-Bonus</span>
       </div>
       {primaryAttrs.map((attr) => (
         <AttrRow key={attr} attr={attr} gearValue={gearTotal[attr]} traitDelta={traitDeltaFor(attr, traitBonuses)} />
@@ -80,7 +80,7 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
         <AttrRow key={attr} attr={attr} gearValue={gearTotal[attr]} traitDelta={traitDeltaFor(attr, traitBonuses)} />
       ))}
 
-      <div className="label" style={{ margin: "16px 0 6px", color: "var(--gold)" }}>
+      <div className="label" style={{ margin: "16px 0 6px", color: "var(--accent)" }}>
         Abgeleitete Werte
       </div>
       <DerivedRow label="Critical Chance" gearOnly={derivedGear.critChance} withTraits={derivedTotal.critChance} unit="%" />
@@ -90,14 +90,14 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
       <DerivedRow label="Armor" gearOnly={derivedGear.armor} withTraits={derivedTotal.armor} />
       <DerivedRow label="Health" gearOnly={derivedGear.health} withTraits={derivedTotal.health} />
 
-      <div className="hero-stat panel teal-accent">
-        <div className="label" style={{ color: "var(--teal)" }}>
+      <div className="hero-stat">
+        <div className="label" style={{ color: "var(--accent)" }}>
           Effektive Lebenspunkte
         </div>
         <div className="value">
           {derivedTotal.eHP.toLocaleString("de-DE")}
           {derivedTotal.eHP !== derivedGear.eHP && (
-            <span style={{ color: "var(--green)", fontSize: 14, marginLeft: 6 }}>
+            <span style={{ color: "var(--positive)", fontSize: 14, marginLeft: 6 }}>
               (Basis: {derivedGear.eHP.toLocaleString("de-DE")})
             </span>
           )}
@@ -105,8 +105,8 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
         <div className="sub">eHP ≈ Health × Armor ÷ 2597 (Referenz-Golem)</div>
       </div>
 
-      <div className="hero-stat panel accent">
-        <div className="label" style={{ color: "var(--gold)" }}>
+      <div className="hero-stat">
+        <div className="label" style={{ color: "var(--accent)" }}>
           Ø-Schaden/Treffer (Beispiel-Skill)
         </div>
         <div className="value">{Math.round(avgDmg).toLocaleString("de-DE")}</div>
@@ -119,7 +119,7 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
             Getriggerte Heilungen (nicht in Stats)
           </div>
           {triggeredEffects.map((e, i) => (
-            <div key={i} style={{ fontSize: 11, color: "var(--ink-dim)" }}>
+            <div key={i} style={{ fontSize: 11, color: "var(--text-muted)" }}>
               {e.traitName}: heilt {e.amount}
             </div>
           ))}

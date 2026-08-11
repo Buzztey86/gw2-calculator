@@ -3,8 +3,8 @@ import AvailableBuffsPanel from "./AvailableBuffsPanel";
 
 export default function Sidebar({ professionName, gearTotal, traitBonuses, triggeredEffects, availableBuffs, effects, activeTraits }) {
   return (
-    <div className="panel accent sidebar-panel">
-      <div className="label" style={{ color: "var(--gold)", marginBottom: 12 }}>
+    <div className="panel sidebar-panel">
+      <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
         Stats (live)
       </div>
       <GearStatsPanel
@@ -14,19 +14,19 @@ export default function Sidebar({ professionName, gearTotal, traitBonuses, trigg
         triggeredEffects={triggeredEffects}
       />
 
-      <div className="label" style={{ color: "var(--gold)", margin: "18px 0 8px" }}>
+      <div className="label" style={{ color: "var(--accent)", margin: "18px 0 8px" }}>
         Verfügbare Buffs (aus Talenten)
       </div>
       <AvailableBuffsPanel availableBuffs={availableBuffs} effects={effects} />
 
       <details style={{ marginTop: 18 }}>
-        <summary className="label" style={{ color: "var(--gold)", cursor: "pointer" }}>
+        <summary className="label" style={{ color: "var(--accent)", cursor: "pointer" }}>
           Aktive Talente ({activeTraits.length})
         </summary>
         <div style={{ marginTop: 8 }}>
           {activeTraits.map((t) => (
-            <div key={t.id} style={{ fontSize: 11.5, padding: "3px 0", borderBottom: "1px solid var(--line)" }}>
-              <span style={{ color: t.slot === "Minor" ? "var(--ink-dim)" : "var(--gold)" }}>
+            <div key={t.id} style={{ fontSize: 11.5, padding: "3px 0", borderBottom: "1px solid var(--border)" }}>
+              <span style={{ color: t.slot === "Minor" ? "var(--text-muted)" : "var(--accent)" }}>
                 {t.slot === "Minor" ? "○" : "●"} {t.name}
               </span>
             </div>

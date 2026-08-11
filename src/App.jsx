@@ -62,7 +62,7 @@ export default function App() {
   return (
     <div className="app-shell">
       <div className="header">
-        <div className="label" style={{ color: "var(--gold)", marginBottom: 6 }}>
+        <div className="label" style={{ color: "var(--accent)", marginBottom: 6 }}>
           Guild Wars 2 · Gilden-Build-Tool (lokale Vorschau)
         </div>
         <h1>Charakter-Build-Rechner</h1>
@@ -95,7 +95,7 @@ export default function App() {
             {tab === "talente" && (
               <div className="grid-cols grid-2">
                 <div className="panel">
-                  <div className="label" style={{ color: "var(--gold)", marginBottom: 12 }}>
+                  <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                     Talente (3-Linien-System)
                   </div>
                   <TraitLinePicker
@@ -110,8 +110,8 @@ export default function App() {
                   />
                 </div>
 
-                <div className="panel teal-accent">
-                  <div className="label" style={{ color: "var(--teal)", marginBottom: 12 }}>
+                <div className="panel">
+                  <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                     Waffenfähigkeiten (live nach Talenten)
                   </div>
                   <WeaponSkillBrowser professionData={data} activeTraitIds={activeTraitIds} traitsById={traitsById} />
@@ -120,8 +120,8 @@ export default function App() {
             )}
 
             {tab === "ausruestung" && (
-              <div className="panel accent">
-                <div className="label" style={{ color: "var(--gold)", marginBottom: 12 }}>
+              <div className="panel">
+                <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                   Ausrüstung (Mix & Match pro Slot)
                 </div>
                 <GearSlotPicker

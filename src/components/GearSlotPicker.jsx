@@ -62,7 +62,7 @@ export default function GearSlotPicker({ weaponSetup, setWeaponSetup, slotSelect
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px 12px" }}>
         {slots.map((slot) => (
           <div key={slot.key}>
-            <div style={{ fontSize: 11.5, color: "var(--ink-dim)", marginBottom: 3 }}>{slot.label}</div>
+            <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 3 }}>{slot.label}</div>
             <select
               value={slotSelections[slot.key] || ""}
               onChange={(e) => handleSlotChange(slot.key, e.target.value)}
