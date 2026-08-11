@@ -20,6 +20,7 @@ import {
   getAllSlots,
 } from "./lib/stats";
 import { professionColor } from "./lib/professionColors";
+import { decodeBuildCode, peekProfessionFromCode } from "./lib/buildCode";
 
 function defaultLinesFor(professionData) {
   const core = professionData.specializations.core;
@@ -51,7 +52,7 @@ export default function App() {
   const [selectedUtilities, setSelectedUtilities] = useState([]);
   const [selectedElite, setSelectedElite] = useState(null);
   const [skillTab, setSkillTab] = useState("waffen");
-  const [pendingImport, setPendingImport] = useState(null);
+  const [pendingImportCode, setPendingImportCode] = useState(null);
 
   const { data, error, loading } = useProfessionData(professionId);
   const professionsIndex = useStaticData("professions-index");
@@ -61,6 +62,7 @@ export default function App() {
   const wvwFoods = useStaticData("wvw-foods");
   const wvwUtilities = useStaticData("wvw-utilities");
   const wvwInfusions = useStaticData("wvw-infusions");
+  const paletteMap = useStaticData("skill-palette-map");
 
   const professionIcons = useMemo(() => {
     if (!professionsIndex) return {};
@@ -69,14 +71,19 @@ export default function App() {
 
   useEffect(() => {
     if (!data || data.id !== professionId) return;
-    if (pendingImport && pendingImport.professionId === professionId) {
-      setEliteSpec(pendingImport.eliteSpec);
-      setLines(pendingImport.lines);
-      setSelectedMajors(pendingImport.selectedMajors);
-      setSelectedHeal(pendingImport.selectedHeal);
-      setSelectedUtilities(pendingImport.selectedUtilities);
-      setSelectedElite(pendingImport.selectedElite);
-      setPendingImport(null);
+    if (pendingImportCode) {
+      try {
+        const decoded = decodeBuildCode(pendingImportCode, { [professionId]: data }, paletteMap);
+        setEliteSpec(decoded.eliteSpec);
+        setLines(decoded.lines);
+        setSelectedMajors(decoded.selectedMajors);
+        setSelectedHeal(decoded.selectedHeal);
+        setSelectedUtilities(decoded.selectedUtilities);
+        setSelectedElite(decoded.selectedElite);
+      } catch (err) {
+        console.error("Build-Code-Import fehlgeschlagen:", err.message);
+      }
+      setPendingImportCode(null);
       return;
     }
     setEliteSpec(null);
@@ -91,22 +98,16 @@ export default function App() {
       if (spec) majors[lineId] = pickDefaultMajors(spec);
     }
     setSelectedMajors(majors);
-  }, [data, pendingImport, professionId]);
+  }, [data, pendingImportCode, professionId, paletteMap]);
 
-  function handleImportBuildCode(decoded) {
-    setPendingImport(decoded);
-    if (decoded.professionId !== professionId) {
-      setProfessionId(decoded.professionId);
-    } else {
-      // Bereits auf der richtigen Klasse: Daten sind schon geladen, direkt anwenden
-      setEliteSpec(decoded.eliteSpec);
-      setLines(decoded.lines);
-      setSelectedMajors(decoded.selectedMajors);
-      setSelectedHeal(decoded.selectedHeal);
-      setSelectedUtilities(decoded.selectedUtilities);
-      setSelectedElite(decoded.selectedElite);
-      setPendingImport(null);
+  function handleImportBuildCode(code) {
+    const targetProfession = peekProfessionFromCode(code); // wirft bei ungültigem Code
+    setPendingImportCode(code);
+    if (targetProfession !== professionId) {
+      setProfessionId(targetProfession);
     }
+    // Ist die Zielklasse schon aktiv, greift der obige useEffect beim naechsten Render
+    // (data ist schon da), da pendingImportCode sich geaendert hat.
   }
 
   const build = useMemo(
@@ -194,7 +195,7 @@ export default function App() {
 
             {tab === "talente" && (
               <>
-                <BuildCodeBar build={build} onImport={handleImportBuildCode} />
+                <BuildCodeBar build={build} professionData={data} paletteMap={paletteMap} onImport={handleImportBuildCode} />
                 <div className="grid-cols grid-2">
                   <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
                     <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>

@@ -1,15 +1,20 @@
 import { useState } from "react";
-import { encodeBuildCode, decodeBuildCode } from "../lib/buildCode";
+import { encodeBuildCode } from "../lib/buildCode";
 
-export default function BuildCodeBar({ build, onImport }) {
+export default function BuildCodeBar({ build, professionData, paletteMap, onImport }) {
   const [importValue, setImportValue] = useState("");
   const [exportValue, setExportValue] = useState("");
   const [copyStatus, setCopyStatus] = useState("");
   const [importError, setImportError] = useState("");
 
   function handleExport() {
-    setExportValue(encodeBuildCode(build));
-    setCopyStatus("");
+    try {
+      setExportValue(encodeBuildCode(build, professionData, paletteMap));
+      setCopyStatus("");
+    } catch (err) {
+      setExportValue("");
+      setCopyStatus(err.message);
+    }
   }
 
   async function handleCopy() {
@@ -24,8 +29,7 @@ export default function BuildCodeBar({ build, onImport }) {
   function handleImport() {
     setImportError("");
     try {
-      const decoded = decodeBuildCode(importValue.trim());
-      onImport(decoded);
+      onImport(importValue.trim());
       setImportValue("");
     } catch (err) {
       setImportError(err.message);
@@ -34,8 +38,12 @@ export default function BuildCodeBar({ build, onImport }) {
 
   return (
     <div className="panel" style={{ marginBottom: 16 }}>
-      <div className="label" style={{ color: "var(--accent)", marginBottom: 10 }}>
-        Build-Code (eigenes Format, nur in diesem Tool nutzbar)
+      <div className="label" style={{ color: "var(--accent)", marginBottom: 4 }}>
+        Build-Code (echtes GW2-Chat-Link-Format, Typ 0x0D)
+      </div>
+      <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginBottom: 10 }}>
+        Kompatibel mit dem Spiel/gw2skills.net für Klasse, Talente und Heal-/Utility-/Elite-Skills. Ranger-Pets,
+        Revenant-Legenden und Waffenauswahl sind (noch) nicht Teil dieses Tools und werden nicht kodiert.
       </div>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>
@@ -68,9 +76,9 @@ export default function BuildCodeBar({ build, onImport }) {
               >
                 In Zwischenablage kopieren
               </button>
-              {copyStatus && <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: 8 }}>{copyStatus}</span>}
             </>
           )}
+          {copyStatus && <span style={{ fontSize: 11, color: "var(--text-muted)", marginLeft: 8 }}>{copyStatus}</span>}
         </div>
 
         <div>
@@ -78,7 +86,7 @@ export default function BuildCodeBar({ build, onImport }) {
           <textarea
             value={importValue}
             onChange={(e) => setImportValue(e.target.value)}
-            placeholder="GW2BT1-… hier einfügen"
+            placeholder="[&DQ…] hier einfügen"
             rows={2}
             style={{
               width: "100%",
