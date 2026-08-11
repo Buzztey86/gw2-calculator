@@ -1,0 +1,343 @@
+{
+ "baseAttributes": {
+  "Power": 1000,
+  "Precision": 1000,
+  "Toughness": 1000,
+  "Vitality": 1000,
+  "Ferocity": 0,
+  "ConditionDamage": 0,
+  "Expertise": 0,
+  "Concentration": 0,
+  "HealingPower": 0
+ },
+ "conversions": {
+  "critChance": {
+   "base": 5,
+   "per": 21,
+   "attribute": "Precision",
+   "unit": "%",
+   "note": "5% + (Precision-1000)/21"
+  },
+  "critDamage": {
+   "base": 150,
+   "per": 15,
+   "attribute": "Ferocity",
+   "unit": "%",
+   "note": "150% + Ferocity/15"
+  },
+  "boonDuration": {
+   "base": 0,
+   "per": 15,
+   "attribute": "Concentration",
+   "unit": "%"
+  },
+  "conditionDuration": {
+   "base": 0,
+   "per": 15,
+   "attribute": "Expertise",
+   "unit": "%"
+  },
+  "health": {
+   "per": 10,
+   "attribute": "Vitality",
+   "unit": "HP",
+   "note": "1 Vitality = 10 Health"
+  },
+  "armor": {
+   "formula": "Toughness + Defense"
+  }
+ },
+ "baseHealthByProfession": {
+  "Guardian": 11645,
+  "Elementalist": 11645,
+  "Mesmer": 11645,
+  "Necromancer": 11645,
+  "Engineer": 15922,
+  "Ranger": 15922,
+  "Revenant": 15922,
+  "Thief": 15922,
+  "Warrior": 19212
+ },
+ "armorWeightByProfession": {
+  "Guardian": "Heavy",
+  "Warrior": "Heavy",
+  "Revenant": "Heavy",
+  "Ranger": "Medium",
+  "Thief": "Medium",
+  "Engineer": "Medium",
+  "Elementalist": "Light",
+  "Mesmer": "Light",
+  "Necromancer": "Light"
+ },
+ "defenseByWeight": {
+  "_comment": "Full 6-piece armor set, level 80, verified from GW2 wiki Armor page",
+  "Light": {
+   "Exotic": 920,
+   "Ascended": 967
+  },
+  "Medium": {
+   "Exotic": 1064,
+   "Ascended": 1118
+  },
+  "Heavy": {
+   "Exotic": 1211,
+   "Ascended": 1271
+  }
+ },
+ "referenceArmor": 2597,
+ "weaponStrength": {
+  "_comment": "Midpoint of weapon strength range; same for all weapon types, only 1H/2H differs slightly per real items checked",
+  "Exotic": 922.5,
+  "Ascended": 968.5,
+  "verifiedExamples": {
+   "1H_exotic_axe": {
+    "min": 857,
+    "max": 1048
+   },
+   "2H_exotic_greatsword": {
+    "min": 995,
+    "max": 1100
+   }
+  }
+ },
+ "slotAttributeBudget": {
+  "_comment": "attribute_adjustment field from real GW2 API items, Exotic rarity, level 80. Multiply by a stat combo's ratio (see statCombos) to get the exact bonus on that slot.",
+  "weapon2h": {
+   "value": 682.88,
+   "verified": true,
+   "source": "Berserker's Stormcaller Greatsword"
+  },
+  "weapon1h": {
+   "value": 341.44,
+   "verified": true,
+   "source": "Berserker's Pearl Reaver (Axe)"
+  },
+  "amulet": {
+   "value": 341.44,
+   "verified": true,
+   "source": "Berserker's Amulet"
+  },
+  "ring": {
+   "value": 256.08,
+   "verified": true,
+   "source": "Berserker's Ring"
+  },
+  "accessory": {
+   "value": 256.08,
+   "verified": false,
+   "note": "assumed equal to ring, not individually confirmed"
+  },
+  "leggings": {
+   "value": 256.08,
+   "verified": true,
+   "source": "Berserker's Leggings/Pants"
+  },
+  "chest": {
+   "value": 384.12,
+   "verified": true,
+   "source": "Berserker's Coat (confirmed identical across Light/Medium/Heavy)"
+  },
+  "minorArmor": {
+   "value": 128.04,
+   "verified": true,
+   "source": "Berserker's Boots",
+   "note": "assumed same for head/shoulders/gloves/boots"
+  },
+  "backitem": {
+   "value": 128.04,
+   "verified": false,
+   "note": "assumed similar to minor armor slot, not confirmed"
+  }
+ },
+ "fullExoticLoadoutSlots": [
+  {
+   "slot": "weapon2h",
+   "count": 1
+  },
+  {
+   "slot": "chest",
+   "count": 1
+  },
+  {
+   "slot": "leggings",
+   "count": 1
+  },
+  {
+   "slot": "minorArmor",
+   "count": 4
+  },
+  {
+   "slot": "amulet",
+   "count": 1
+  },
+  {
+   "slot": "ring",
+   "count": 2
+  },
+  {
+   "slot": "accessory",
+   "count": 2
+  },
+  {
+   "slot": "backitem",
+   "count": 1
+  }
+ ],
+ "statCombos": {
+  "_comment": "ratios from official GW2 API /v2/itemstats — multiply by slot budget to get exact attribute bonus",
+  "Berserker's": {
+   "Power": 0.35,
+   "Precision": 0.25,
+   "Ferocity": 0.25
+  },
+  "Assassin's": {
+   "Power": 0.35,
+   "Precision": 0.25,
+   "Ferocity": 0.25
+  },
+  "Marauder": {
+   "Power": 0.2,
+   "Precision": 0.2,
+   "Vitality": 0.2,
+   "Ferocity": 0.2
+  },
+  "Dragon's": {
+   "Power": 0.2,
+   "Precision": 0.2,
+   "Vitality": 0.2,
+   "Ferocity": 0.2
+  },
+  "Viper's": {
+   "Power": 0.24,
+   "Precision": 0.19,
+   "ConditionDamage": 0.24,
+   "Expertise": 0.19
+  },
+  "Sinister": {
+   "Power": 0.35,
+   "Precision": 0.25,
+   "ConditionDamage": 0.25
+  },
+  "Grieving": {
+   "Power": 0.2,
+   "Precision": 0.2,
+   "Ferocity": 0.2,
+   "ConditionDamage": 0.2
+  },
+  "Trailblazer's": {
+   "Toughness": 0.24,
+   "Vitality": 0.24,
+   "ConditionDamage": 0.24,
+   "Expertise": 0.19
+  },
+  "Dire": {
+   "Toughness": 0.35,
+   "Vitality": 0.25,
+   "ConditionDamage": 0.25
+  },
+  "Cavalier's": {
+   "Power": 0.35,
+   "Toughness": 0.25,
+   "Ferocity": 0.25
+  },
+  "Knight's": {
+   "Power": 0.35,
+   "Precision": 0.25,
+   "Toughness": 0.25
+  },
+  "Soldier's": {
+   "Power": 0.35,
+   "Toughness": 0.25,
+   "Vitality": 0.25
+  },
+  "Nomad's": {
+   "Toughness": 0.2,
+   "Vitality": 0.2,
+   "HealingPower": 0.2,
+   "Concentration": 0.0
+  },
+  "Minstrel's": {
+   "Toughness": 0.22,
+   "Vitality": 0.22,
+   "HealingPower": 0.22,
+   "Concentration": 0.22
+  },
+  "Harrier's": {
+   "Power": 0.3,
+   "HealingPower": 0.3,
+   "Concentration": 0.3
+  },
+  "Diviner's": {
+   "Power": 0.2,
+   "Precision": 0.2,
+   "Ferocity": 0.2,
+   "Concentration": 0.2
+  },
+  "Ritualist's": {
+   "Vitality": 0.2,
+   "ConditionDamage": 0.2,
+   "Concentration": 0.2,
+   "Expertise": 0.2
+  },
+  "Commander's": {
+   "Power": 0.2,
+   "Precision": 0.2,
+   "Toughness": 0.2,
+   "Concentration": 0.2
+  },
+  "Cleric's": {
+   "Power": 0.35,
+   "Toughness": 0.25,
+   "HealingPower": 0.25
+  },
+  "Magi's": {
+   "Precision": 0.35,
+   "Vitality": 0.25,
+   "HealingPower": 0.25
+  },
+  "Celestial": {
+   "Power": 0.11,
+   "Precision": 0.11,
+   "Toughness": 0.11,
+   "Vitality": 0.11,
+   "Ferocity": 0.11,
+   "ConditionDamage": 0.11,
+   "Expertise": 0.11,
+   "Concentration": 0.11,
+   "HealingPower": 0.11
+  }
+ },
+ "damageFormula": {
+  "strikeDamage": "(WeaponStrength * Power * SkillCoefficient) / TargetArmor",
+  "avgCritMultiplier": "1 + (CritChance/100) * (CritDamage/100 - 1)",
+  "effectiveHealth": "Health * (Armor / ReferenceArmor)"
+ },
+ "conditionDamageFormulas": {
+  "_comment": "damage per stack per second at level 80",
+  "Bleeding": {
+   "base": 22,
+   "factor": 0.06
+  },
+  "Burning": {
+   "base": 131,
+   "factor": 0.155
+  },
+  "Poisoned": {
+   "base": 33.5,
+   "factor": 0.06
+  },
+  "Torment_moving": {
+   "base": 22,
+   "factor": 0.06
+  },
+  "Torment_stationary": {
+   "base": 31.8,
+   "factor": 0.09
+  },
+  "Confusion_dot": {
+   "base": 22,
+   "factor": 0.06,
+   "note": "approximate"
+  }
+ }
+}

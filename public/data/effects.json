@@ -1,0 +1,232 @@
+{
+ "boons": [
+  {
+   "name": "Aegis",
+   "description": "Blockt den nächsten eingehenden Angriff.",
+   "icon": "images/gear/aegis.png"
+  },
+  {
+   "name": "Alacrity",
+   "description": "Reduziert die Abklingzeit aller genutzten Fähigkeiten.",
+   "icon": "images/gear/alacrity.png"
+  },
+  {
+   "name": "Fury",
+   "description": "Erhöht die kritische Trefferchance um 20%.",
+   "icon": "images/gear/fury.png"
+  },
+  {
+   "name": "Might",
+   "description": "Erhöht Kraft (Power) und Zustandsschaden je Stapel (bis 25 Stapel).",
+   "icon": "images/gear/might.png"
+  },
+  {
+   "name": "Protection",
+   "description": "Reduziert erlittenen Schaden um 33%.",
+   "icon": "images/gear/protection.png"
+  },
+  {
+   "name": "Quickness",
+   "description": "Erhöht die Wirkungsgeschwindigkeit der meisten Fähigkeiten um 50%.",
+   "icon": "images/gear/quickness.png"
+  },
+  {
+   "name": "Regeneration",
+   "description": "Heilt über Zeit (pro Sekunde).",
+   "icon": "images/gear/regeneration.png"
+  },
+  {
+   "name": "Resistance",
+   "description": "Verhindert die Wirkung der meisten Zustände, solange es aktiv ist.",
+   "icon": "images/gear/resistance.png"
+  },
+  {
+   "name": "Resolution",
+   "description": "Reduziert erlittenen Zustandsschaden um 33%.",
+   "icon": "images/gear/resolution.png"
+  },
+  {
+   "name": "Stability",
+   "description": "Verhindert die meisten Kontrolleffekte; wird pro Treffer verbraucht.",
+   "icon": "images/gear/stability.png"
+  },
+  {
+   "name": "Swiftness",
+   "description": "Erhöht das Lauftempo um 33%.",
+   "icon": "images/gear/swiftness.png"
+  },
+  {
+   "name": "Vigor",
+   "description": "Erhöht die Ausdauerregeneration.",
+   "icon": "images/gear/vigor.png"
+  }
+ ],
+ "conditions": [
+  {
+   "name": "Bleeding",
+   "description": "Physischer Zustandsschaden über Zeit, stapelt in der Intensität.",
+   "icon": "images/gear/bleeding.png"
+  },
+  {
+   "name": "Burning",
+   "description": "Physischer Zustandsschaden über Zeit, stärker als Bleeding.",
+   "icon": "images/gear/burning.png"
+  },
+  {
+   "name": "Torment",
+   "description": "Zustandsschaden; doppelter Schaden bei Bewegung des Ziels.",
+   "icon": "images/gear/torment.png"
+  },
+  {
+   "name": "Confusion",
+   "description": "Schaden bei Fähigkeiteneinsatz des Ziels.",
+   "icon": "images/gear/confusion.png"
+  },
+  {
+   "name": "Poisoned",
+   "description": "Zustandsschaden über Zeit, −33% erhaltene Heilung.",
+   "icon": "images/gear/poisoned.png"
+  },
+  {
+   "name": "Vulnerability",
+   "description": "Erhöht erlittenen Schaden um 1% pro Stapel (bis 25).",
+   "icon": "images/gear/vulnerability.png"
+  },
+  {
+   "name": "Blinded",
+   "description": "Der nächste Angriff des Ziels verfehlt automatisch.",
+   "icon": "images/gear/blinded.png"
+  },
+  {
+   "name": "Chilled",
+   "description": "Reduziertes Lauftempo, erhöhte Abklingzeiten.",
+   "icon": "images/gear/chilled.png"
+  },
+  {
+   "name": "Crippled",
+   "description": "Reduziertes Lauftempo (50%).",
+   "icon": "images/gear/crippled.png"
+  },
+  {
+   "name": "Fear",
+   "description": "Ziel flieht unkontrolliert.",
+   "icon": "images/gear/fear.png"
+  },
+  {
+   "name": "Immobile",
+   "description": "Ziel kann sich nicht bewegen.",
+   "icon": "images/gear/immobile.png"
+  },
+  {
+   "name": "Slow",
+   "description": "Reduzierte Aktionsgeschwindigkeit.",
+   "icon": "images/gear/slow.png"
+  },
+  {
+   "name": "Taunt",
+   "description": "Ziel wird gezwungen, den Verursacher anzugreifen.",
+   "icon": "images/gear/taunt.png"
+  },
+  {
+   "name": "Weakness",
+   "description": "Reduzierte Ausdauerregeneration, 50% Glancing-Blow-Chance.",
+   "icon": "images/gear/weakness.png"
+  }
+ ],
+ "controlEffects": [
+  {
+   "name": "Stun",
+   "description": "Betäubt: keine Aktionen möglich.",
+   "icon": null
+  },
+  {
+   "name": "Daze",
+   "description": "Wie Stun, meist gezielt zum Unterbrechen genutzt.",
+   "icon": null
+  },
+  {
+   "name": "Knockdown",
+   "description": "Wirft zu Boden.",
+   "icon": null
+  },
+  {
+   "name": "Knockback",
+   "description": "Stößt zurück.",
+   "icon": null
+  },
+  {
+   "name": "Launch",
+   "description": "Schleudert hoch in die Luft.",
+   "icon": null
+  },
+  {
+   "name": "Pull",
+   "description": "Zieht zum Verursacher.",
+   "icon": null
+  },
+  {
+   "name": "Float",
+   "description": "Unterwasser-Variante von Launch.",
+   "icon": null
+  },
+  {
+   "name": "Sink",
+   "description": "Unterwasser-Variante von Knockdown.",
+   "icon": null
+  }
+ ],
+ "auras": [
+  {
+   "name": "Fire Aura",
+   "description": "Brennen bei Kontakt.",
+   "icon": "images/gear/fire_aura.png"
+  },
+  {
+   "name": "Frost Aura",
+   "description": "Verlangsamt (Chilled) bei Kontakt.",
+   "icon": "images/gear/frost_aura.png"
+  },
+  {
+   "name": "Light Aura",
+   "description": "Heilt Verbündete bei Kontakt.",
+   "icon": "images/gear/light_aura.png"
+  },
+  {
+   "name": "Magnetic Aura",
+   "description": "Reflektiert Projektile.",
+   "icon": "images/gear/magnetic_aura.png"
+  },
+  {
+   "name": "Shocking Aura",
+   "description": "Betäubt (Daze) bei Kontakt.",
+   "icon": "images/gear/shocking_aura.png"
+  },
+  {
+   "name": "Chaos Aura",
+   "description": "Zufälliger Segen/Zustand bei Kontakt.",
+   "icon": "images/gear/chaos_aura.png"
+  }
+ ],
+ "other": [
+  {
+   "name": "Stealth",
+   "description": "Unsichtbar für Gegner.",
+   "icon": "images/gear/stealth.png"
+  },
+  {
+   "name": "Revealed",
+   "description": "Verhindert Stealth für die Dauer.",
+   "icon": "images/gear/revealed.png"
+  },
+  {
+   "name": "Superspeed",
+   "description": "Stark erhöhtes Lauftempo, kurzzeitig.",
+   "icon": "images/gear/superspeed.png"
+  },
+  {
+   "name": "Unblockable",
+   "description": "Nächster Angriff kann nicht geblockt werden.",
+   "icon": "images/gear/unblockable.png"
+  }
+ ]
+}

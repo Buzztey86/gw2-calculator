@@ -1,0 +1,172 @@
+:root {
+  --ink: #e9e4d4;
+  --ink-dim: #a9a08a;
+  --gold: #c9a24b;
+  --bg: #14161c;
+  --panel: #1c1f28;
+  --line: #2c303c;
+  --teal: #3a6b6f;
+  --green: #5b8a5b;
+  --red: #a85c5c;
+}
+
+* { box-sizing: border-box; }
+
+html, body, #root {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Inter", system-ui, -apple-system, sans-serif;
+}
+
+h1, h2, h3, .display {
+  font-family: "Cinzel", Georgia, serif;
+  font-weight: 600;
+  margin: 0;
+}
+
+.label {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+.app-shell {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 20px 60px;
+}
+
+.header { margin-bottom: 20px; }
+.header h1 { font-size: 28px; color: var(--ink); }
+.header p { color: var(--ink-dim); font-size: 13px; margin-top: 6px; max-width: 640px; }
+
+.profession-grid {
+  display: grid;
+  grid-template-columns: repeat(9, 1fr);
+  gap: 6px;
+  margin-bottom: 20px;
+}
+@media (max-width: 900px) {
+  .profession-grid { grid-template-columns: repeat(3, 1fr); }
+}
+.profession-btn {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 8px 4px; border-radius: 8px; border: 1px solid var(--line);
+  background: var(--panel); color: var(--ink-dim); cursor: pointer;
+  font-size: 11px; font-family: inherit;
+}
+.profession-btn.active { border-color: var(--gold); color: var(--gold); background: #c9a24b1a; }
+.profession-btn img { width: 32px; height: 32px; border-radius: 6px; }
+
+.tabs { display: flex; gap: 4px; margin-bottom: 16px; border-bottom: 1px solid var(--line); }
+.tab-btn {
+  padding: 8px 16px; background: none; border: none; color: var(--ink-dim);
+  cursor: pointer; font-family: inherit; font-size: 13px; letter-spacing: 0.05em;
+  border-bottom: 2px solid transparent;
+}
+.tab-btn.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 18px;
+}
+.panel.accent { border-color: #c9a24b55; }
+.panel.teal-accent { border-color: var(--teal); }
+
+.grid-cols { display: grid; gap: 16px; }
+.grid-3 { grid-template-columns: 2fr 2fr 1.2fr; }
+.grid-2 { grid-template-columns: 1fr 1fr; }
+@media (max-width: 1000px) {
+  .grid-3 { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .main-layout { grid-template-columns: 1fr; }
+}
+.sidebar-col { position: sticky; top: 20px; }
+@media (max-width: 1000px) {
+  .sidebar-col { position: static; }
+}
+.sidebar-panel { max-height: calc(100vh - 40px); overflow-y: auto; }
+@media (max-width: 1000px) {
+  .sidebar-panel { max-height: none; }
+}
+
+select, .select {
+  width: 100%; padding: 7px 10px; border-radius: 6px;
+  background: #11131a; color: var(--ink); border: 1px solid var(--line);
+  font-family: inherit; font-size: 13px;
+}
+
+.icon { border-radius: 4px; display: block; flex-shrink: 0; }
+.icon-fallback { background: var(--line); border-radius: 4px; flex-shrink: 0; }
+
+.trait-line-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.trait-line-header .name { font-size: 15px; color: var(--gold); }
+
+.trait-tier-row { display: flex; gap: 4px; margin-bottom: 4px; }
+.trait-btn {
+  flex: 1; display: flex; align-items: center; gap: 6px; text-align: left;
+  padding: 5px 7px; border-radius: 6px; cursor: pointer; font-family: inherit;
+  background: #11131a; border: 1px solid var(--line); color: var(--ink-dim);
+  font-size: 10.5px; line-height: 1.15;
+}
+.trait-btn.selected { background: #c9a24b22; border-color: var(--gold); color: var(--gold); }
+
+.minor-traits-row { display: flex; gap: 6px; margin-top: 6px; opacity: 0.75; }
+
+.stat-row {
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 13px;
+}
+.stat-row .value { font-family: "Cinzel", Georgia, serif; font-size: 16px; color: var(--ink); }
+.stat-row .sub { color: var(--ink-dim); font-size: 11px; margin-left: 6px; }
+
+.hero-stat { border-radius: 8px; padding: 12px; margin-top: 12px; }
+.hero-stat .value { font-family: "Cinzel", Georgia, serif; font-size: 24px; color: var(--ink); }
+
+.weapon-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 10px; }
+.weapon-tab {
+  padding: 4px 10px; border-radius: 14px; font-size: 11.5px; cursor: pointer;
+  background: #11131a; border: 1px solid var(--line); color: var(--ink-dim); font-family: inherit;
+}
+.weapon-tab.active { border-color: var(--teal); color: var(--teal); }
+
+.skill-row {
+  display: flex; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line);
+  cursor: pointer; align-items: flex-start;
+}
+.skill-row:hover { background: #ffffff06; }
+.skill-row .name { font-size: 13px; color: var(--ink); font-weight: 600; }
+.skill-row .desc { font-size: 11px; color: var(--ink-dim); margin-top: 2px; }
+.skill-row .slot-label { font-size: 10px; color: var(--gold); min-width: 22px; text-align: center; padding-top: 2px; }
+
+.fact-line { font-size: 12px; color: var(--ink); padding: 3px 0; border-bottom: 1px solid var(--line); }
+.traited-note { margin-top: 10px; font-size: 11.5px; color: var(--gold); }
+.no-trait-note { margin-top: 10px; font-size: 11.5px; color: var(--ink-dim); }
+
+.error-box {
+  background: #a85c5c22; border: 1px solid var(--red); border-radius: 6px;
+  padding: 8px 12px; font-size: 12px; color: #d99; margin-bottom: 12px;
+}
+.valid-box {
+  background: #5b8a5b22; border: 1px solid var(--green); border-radius: 6px;
+  padding: 6px 12px; font-size: 12px; color: #9c9; margin-bottom: 12px;
+}
+
+.loading { color: var(--ink-dim); font-size: 13px; padding: 40px; text-align: center; }
+.footer-note { text-align: center; color: var(--ink-dim); opacity: 0.6; font-size: 11px; margin-top: 30px; letter-spacing: 0.05em; }
+.line-select-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+.line-select-row select { flex: 1; }

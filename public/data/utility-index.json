@@ -1,0 +1,244 @@
+{
+ "stealthField": [
+  {
+   "profession": "Thief",
+   "name": "Blinding Powder",
+   "icon": "images/thief/blinding_powder.png",
+   "description": "Deception. Blind nearby foes and grant stealth to nearby allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Thief",
+   "name": "Shadow Refuge",
+   "icon": "images/thief/shadow_refuge.png",
+   "description": "Deception. Create a pulsing refuge at the target area that heals allies, cloaks allies in stealth, and reduces damage taken.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Engineer",
+   "name": "Sneak Gyro",
+   "icon": "images/engineer/sneak_gyro.png",
+   "description": "Well. Deploy a sneak gyro to provide stealth to allies in the area.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  },
+  {
+   "profession": "Mesmer",
+   "name": "Veil",
+   "icon": "images/mesmer/veil.png",
+   "description": "Glamour. Create a wall that grants stealth to you and your allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  }
+ ],
+ "massStealth": [
+  {
+   "profession": "Mesmer",
+   "name": "Mass Invisibility",
+   "icon": "images/mesmer/mass_invisibility.png",
+   "description": "Manipulation. You and all your allies gain stealth for a short time.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  }
+ ],
+ "groupStability": [
+  {
+   "profession": "Guardian",
+   "name": "Virtue of Courage",
+   "icon": "images/guardian/virtue_of_courage.png",
+   "description": "Virtue: Gain aegis periodically. Activate: Grant aegis to yourself and nearby allies.",
+   "source": "Core",
+   "sourceType": "core-mechanic"
+  },
+  {
+   "profession": "Guardian",
+   "name": "\"Stand Your Ground!\"",
+   "icon": "images/guardian/stand_your_ground.png",
+   "description": "Shout. Grant stability to yourself and allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Guardian",
+   "name": "Hallowed Ground",
+   "icon": "images/guardian/hallowed_ground.png",
+   "description": "Consecration. Consecrate the target area, granting stability to allies inside.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Guardian",
+   "name": "Fragments of Faith",
+   "icon": "images/guardian/fragments_of_faith.png",
+   "description": "Trap. Lay a trap that deals damage and unleashes multiple fragments into the area when triggered. Each fragment grants aegis to allies, as long as they don't already have aegis.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Guardian",
+   "name": "Valorous Stance",
+   "icon": "images/guardian/valorous_stance.png",
+   "description": "Stance. Enter a stance that causes you to heal allies when you grant them boons, then grant boons to nearby allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Guardian",
+   "name": "Signet of Courage",
+   "icon": "images/guardian/signet_of_courage.png",
+   "description": "Signet Passive: Periodically heal allies in an area around you while in combat. Signet Active: Channel healing and boons in a large area around you, concluding with a large heal if this skill is not interrupted.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  },
+  {
+   "profession": "Warrior",
+   "name": "Banner of Tactics",
+   "icon": "images/warrior/banner_of_tactics.png",
+   "description": "Banner. Place a banner that grants boons and superspeed and breaks stuns on initial placement, then pulses boons to you and nearby allies afterward.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Revenant",
+   "name": "Inspiring Reinforcement",
+   "icon": "images/revenant/inspiring_reinforcement.png",
+   "description": "Legendary Dwarf. Create a stone road that damages and weakens foes as it's created. Once it's created it will pulse, granting stability to allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Thief",
+   "name": "Well of Bounty",
+   "icon": "images/thief/well_of_bounty.png",
+   "description": "Well. Shadowstep to a targeted point and create a well that grants boons to allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Engineer",
+   "name": "Crisis Zone",
+   "icon": "images/engineer/crisis_zone.png",
+   "description": "Mech Command. Your mech removes conditions, breaks stuns, and grants boons to itself and nearby allies.  The mech does not count against the target count for this skill.",
+   "source": "Mechanist",
+   "sourceType": "elite-unique"
+  },
+  {
+   "profession": "Elementalist",
+   "name": "\"Eye of the Storm!\"",
+   "icon": "images/elementalist/eye_of_the_storm.png",
+   "description": "Shout. Imbue your voice with the element of air, massively increasing speed and breaking stun for nearby allies.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Elementalist",
+   "name": "\"Rebound!\"",
+   "icon": "images/elementalist/rebound.png",
+   "description": "Shout. Shout and infuse your allies with arcane energy. Allies who would take lethal damage while this is active ignore the deathblow and are healed instead. If the effect expires naturally, grant an aura based on your current attunement.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  },
+  {
+   "profession": "Elementalist",
+   "name": "Overload Earth",
+   "icon": "images/elementalist/overload_earth.png",
+   "description": "Overload. Ride your stored earth magic around, granting protection to other allies you move over and crippling enemies, then deliver a final immobilizing blast of power to the area, leaving behind a dust cyclone that delivers the same effects as the overload. Using this skill causes the attunement to have a longer recharge.",
+   "source": "Tempest",
+   "sourceType": "elite-unique"
+  },
+  {
+   "profession": "Mesmer",
+   "name": "Mantra of Concentration",
+   "icon": "images/mesmer/mantra_of_concentration.png",
+   "description": "Mantra. Meditate, charging a spell that will break stuns and grant stability to nearby allies. Grant boons to nearby allies when this spell fully charges.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Mesmer",
+   "name": "Well of Precognition",
+   "icon": "images/mesmer/well_of_precognition.png",
+   "description": "Well. Create a well that gives allies the ability to see the future, allowing them to block incoming attacks. When the well ends, allies within the well regain endurance.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Necromancer",
+   "name": "Well of Power",
+   "icon": "images/necromancer/well_of_power.png",
+   "description": "Well. Target area pulses, converting conditions on allies into boons and granting might.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Necromancer",
+   "name": "Trail of Anguish",
+   "icon": "images/necromancer/trail_of_anguish.png",
+   "description": "Punishment. Leave a trail of sand as you travel. Grant boons to allies passing through it. Inflict burning on enemies and corrupt a boon into torment.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Necromancer",
+   "name": "Xinrae's Weapon",
+   "icon": "images/necromancer/xinrae_s_weapon.png",
+   "description": "Weapon spell. When you take damage over a percentage of your maximum health, heal for the difference, then steal life from that foe. Grant fewer stacks of this to nearby allies and break them out of stuns.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  }
+ ],
+ "instantRevive": [
+  {
+   "profession": "Guardian",
+   "name": "Signet of Mercy",
+   "icon": "images/guardian/signet_of_mercy.png",
+   "description": "Signet Passive: Improves concentration. Signet Active: Revive a nearby downed ally.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Elementalist",
+   "name": "Signet of Water",
+   "icon": "images/elementalist/signet_of_water.png",
+   "description": "Signet Passive: Reduces incoming condition duration. Signet Active: Damage and chill foes while healing and reviving allies in an area.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  },
+  {
+   "profession": "Necromancer",
+   "name": "Signet of Undeath",
+   "icon": "images/necromancer/signet_of_undeath.png",
+   "description": "Signet Passive: Generates life force while in combat. Signet Active: Sacrifice health to revive one downed ally in a target area.",
+   "source": "utility",
+   "sourceType": "utility-utility"
+  }
+ ],
+ "stompFinisher": [
+  {
+   "profession": "Guardian",
+   "name": "Heaven's Palm",
+   "icon": "images/guardian/heaven_s_palm.png",
+   "description": "Physical. Evade attacks, then shadowstep and slam the ground, knocking down your targeted foe, finishing them if there are no other enemy players nearby. Foes that aren't targeted are knocked back instead.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  },
+  {
+   "profession": "Warrior",
+   "name": "Battle Standard",
+   "icon": "images/warrior/battle_standard.png",
+   "description": "Banner. Place a battle standard that revives fallen allies and finishes downed foes. Once placed, the banner periodically grants boons to allies.",
+   "source": "elite",
+   "sourceType": "utility-elite"
+  },
+  {
+   "profession": "Engineer",
+   "name": "Function Gyro",
+   "icon": "images/engineer/function_gyro.png",
+   "description": "Create a lightning field at the specified point. Then summon gyros to finish foes and revive allies within the field. The recharge of this skill is increased for each gyro created beyond the first. Interrupted gyros are destroyed.",
+   "source": "Scrapper",
+   "sourceType": "elite-unique"
+  }
+ ]
+}
