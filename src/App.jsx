@@ -68,7 +68,7 @@ export default function App() {
   }, [professionsIndex]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!data || data.id !== professionId) return;
     if (pendingImport && pendingImport.professionId === professionId) {
       setEliteSpec(pendingImport.eliteSpec);
       setLines(pendingImport.lines);

@@ -18,6 +18,7 @@ export function useProfessionData(professionId) {
 
   useEffect(() => {
     if (!professionId) return;
+    setData(null); // alte Klassendaten sofort verwerfen, sonst kurzzeitig falsche Daten sichtbar
     setLoading(true);
     setError(null);
     fetchJson(`/data/${professionId}.json`)
