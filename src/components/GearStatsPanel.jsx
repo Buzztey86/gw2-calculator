@@ -58,11 +58,12 @@ function DerivedRow({ label, gearOnly, withTraits, unit = "", sub }) {
   );
 }
 
-export default function GearStatsPanel({ professionName, gearTotal, traitBonuses, triggeredEffects }) {
+export default function GearStatsPanel({ professionName, gearTotal, rarity = "exotic", traitBonuses, triggeredEffects }) {
   const total = addTraitBonuses(gearTotal, traitBonuses);
-  const derivedGear = computeDerivedStats(gearTotal, professionName);
-  const derivedTotal = computeDerivedStats(total, professionName);
-  const avgDmg = averageHitDamage(total.Power, derivedTotal.critChance, derivedTotal.critDamage);
+  const derivedGear = computeDerivedStats(gearTotal, professionName, rarity);
+  const derivedTotal = computeDerivedStats(total, professionName, rarity);
+  const weaponStrength = rarity === "ascended" ? 1100 : 1047.5;
+  const avgDmg = averageHitDamage(total.Power, derivedTotal.critChance, derivedTotal.critDamage, weaponStrength);
 
   const primaryAttrs = ["Power", "Precision", "Toughness", "Vitality"];
   const secondaryAttrs = ["Ferocity", "ConditionDamage", "Expertise", "Concentration", "HealingPower"];
@@ -110,7 +111,7 @@ export default function GearStatsPanel({ professionName, gearTotal, traitBonuses
           Ø-Schaden/Treffer (Beispiel-Skill)
         </div>
         <div className="value">{Math.round(avgDmg).toLocaleString("de-DE")}</div>
-        <div className="sub">Koeff. 1.0, Waffenstärke 1047,5, gg. 2597 Armor</div>
+        <div className="sub">Koeff. 1.0, Waffenstärke {weaponStrength}, gg. 2597 Armor</div>
       </div>
 
       {triggeredEffects.length > 0 && (

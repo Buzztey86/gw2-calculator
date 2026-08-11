@@ -10,7 +10,7 @@ export const BASE_ATTR = {
 };
 
 // Attribut-Budgets pro Slot-Typ, Exotic, Level 80 (API-verifiziert, siehe gw2-project/README.md)
-export const BUDGET_BY_TYPE = {
+export const BUDGET_BY_TYPE_EXOTIC = {
   weapon2h: 682.88,
   weapon1h: 341.44,
   amulet: 341.44,
@@ -21,6 +21,32 @@ export const BUDGET_BY_TYPE = {
   minorArmor: 128.04, // Kopf/Schulter/Hand/Fuß
   backitem: 128.04,
 };
+
+// Ascended = Exotic x 1.05, API-verifiziert (Zojja's Claymore: 717.024 / 682.88 = 1.05 exakt).
+export const ASCENDED_MULTIPLIER = 1.05;
+export const BUDGET_BY_TYPE_ASCENDED = Object.fromEntries(
+  Object.entries(BUDGET_BY_TYPE_EXOTIC).map(([k, v]) => [k, v * ASCENDED_MULTIPLIER])
+);
+
+export function budgetByType(rarity) {
+  return rarity === "ascended" ? BUDGET_BY_TYPE_ASCENDED : BUDGET_BY_TYPE_EXOTIC;
+}
+
+// Infusionsslots pro Slot-Typ. Bei Exotic haben regulaer nur bestimmte
+// Fraktal-Trinkets (z.B. "Feedback Loop"-Ring) ueberhaupt einen Sockel - hier
+// als optionaler Slot fuer Ring/Amulett/Schmuckstueck nachgebildet. Bei
+// Ascended hat grundsaetzlich alles einen Sockel, Ringe sogar zwei.
+export const INFUSION_SLOTS_EXOTIC = {
+  ring: 1, amulet: 1, accessory: 1,
+  weapon2h: 0, weapon1h: 0, leggings: 0, chest: 0, minorArmor: 0, backitem: 0,
+};
+export const INFUSION_SLOTS_ASCENDED = {
+  ring: 2, amulet: 1, accessory: 1,
+  weapon2h: 2, weapon1h: 1, leggings: 1, chest: 1, minorArmor: 1, backitem: 1,
+};
+export function infusionSlotsByType(rarity) {
+  return rarity === "ascended" ? INFUSION_SLOTS_ASCENDED : INFUSION_SLOTS_EXOTIC;
+}
 
 // Jeder einzelne Ausrüstungsplatz mit Anzeige-Name + zugehörigem Budget-Typ.
 // weaponMain/weaponOff hängen vom gewählten Waffen-Setup ab (siehe getWeaponSlots).
@@ -54,7 +80,11 @@ export function getAllSlots(weaponSetup) {
   return [...getWeaponSlots(weaponSetup), ...ARMOR_TRINKET_SLOTS];
 }
 
-export const DEFENSE_BY_WEIGHT_EXOTIC = { Light: 920, Medium: 1064, Heavy: 1211 };
+export const DEFENSE_BY_WEIGHT = {
+  Light: { exotic: 920, ascended: 967 },
+  Medium: { exotic: 1064, ascended: 1118 },
+  Heavy: { exotic: 1211, ascended: 1271 },
+};
 export const BASE_HEALTH_BY_PROFESSION = {
   Guardian: 11645, Elementalist: 11645, Mesmer: 11645, Necromancer: 11645,
   Engineer: 15922, Ranger: 15922, Revenant: 15922, Thief: 15922, Warrior: 19212,
@@ -114,8 +144,9 @@ export const STAT_COMBO_ROLE = {
   "Celestial": "Generalist (alle Attribute)",
 };
 
-export function computeGearAttributesFromSlots(slotSelections, weaponSetup) {
+export function computeGearAttributesFromSlots(slotSelections, weaponSetup, rarity = "exotic") {
   const slots = getAllSlots(weaponSetup);
+  const budgets = budgetByType(rarity);
   const total = { ...BASE_ATTR };
   const perSlotContribution = {}; // slotKey -> {attr: value}
   for (const slot of slots) {
@@ -123,7 +154,7 @@ export function computeGearAttributesFromSlots(slotSelections, weaponSetup) {
     if (!prefixName) continue;
     const ratios = STAT_COMBOS[prefixName];
     if (!ratios) continue;
-    const budget = BUDGET_BY_TYPE[slot.budgetType];
+    const budget = budgets[slot.budgetType];
     const contrib = {};
     Object.entries(ratios).forEach(([attr, ratio]) => {
       const val = ratio * budget;
@@ -155,13 +186,13 @@ export function addTraitBonuses(total, traitBonuses) {
   return out;
 }
 
-export function computeDerivedStats(total, professionName) {
+export function computeDerivedStats(total, professionName, rarity = "exotic") {
   const critChance = Math.min(100, 5 + (total.Precision - 1000) / 21);
   const critDamage = 150 + total.Ferocity / 15;
   const boonDuration = total.Concentration / 15;
   const conditionDuration = total.Expertise / 15;
   const weight = ARMOR_WEIGHT_BY_PROFESSION[professionName] || "Medium";
-  const defense = DEFENSE_BY_WEIGHT_EXOTIC[weight];
+  const defense = DEFENSE_BY_WEIGHT[weight][rarity === "ascended" ? "ascended" : "exotic"];
   const armor = defense + total.Toughness;
   const baseHealth = BASE_HEALTH_BY_PROFESSION[professionName] || 15922;
   const health = (baseHealth - 10000) + total.Vitality * 10;
@@ -173,4 +204,47 @@ export function averageHitDamage(power, critChance, critDamage, weaponStrength =
   const baseHit = (weaponStrength * power * coefficient) / targetArmor;
   const avgCritMult = 1 + (critChance / 100) * (critDamage / 100 - 1);
   return baseHit * avgCritMult;
+}
+
+// --- Runen: 6-teiliger Bonus aus den API-Statwerten (kumulativ je Stat, daher Maximum je Attribut nehmen) ---
+export function parseRuneBonuses(statBonusStrings) {
+  const bonuses = {};
+  for (const s of statBonusStrings || []) {
+    const m = s.match(/^\+?(\d+)%?\s+(.+)$/);
+    if (!m) continue;
+    const value = Number(m[1]);
+    const rawName = m[2].trim();
+    const nameMap = {
+      Power: "Power", Precision: "Precision", Toughness: "Toughness", Vitality: "Vitality",
+      Ferocity: "Ferocity", "Condition Damage": "ConditionDamage", Expertise: "Expertise",
+      Concentration: "Concentration", "Healing Power": "HealingPower",
+    };
+    const attr = nameMap[rawName];
+    if (!attr) continue;
+    bonuses[attr] = Math.max(bonuses[attr] || 0, value);
+  }
+  return bonuses;
+}
+
+// --- Infusionen: Summe aller ausgewählten Infusionen (Agony Resistance wird ignoriert, betrifft nur Fraktal-Ueberleben, nicht die angezeigten Attribute) ---
+export function sumInfusionBonuses(selectedInfusions, infusionCatalog) {
+  const bonuses = {};
+  for (const infId of selectedInfusions) {
+    const inf = infusionCatalog.find((i) => i.id === infId);
+    if (!inf) continue;
+    for (const [stat, value] of Object.entries(inf.stats || {})) {
+      if (stat === "AgonyResistance") continue;
+      bonuses[stat] = (bonuses[stat] || 0) + value;
+    }
+  }
+  return bonuses;
+}
+
+// generische Merge-Funktion für alle "einfachen" Bonusquellen (Rune, Food, Infusion, Trait bereits ueber addTraitBonuses)
+export function mergeBonuses(total, bonuses) {
+  const out = { ...total };
+  for (const [attr, value] of Object.entries(bonuses)) {
+    out[attr] = (out[attr] || 0) + value;
+  }
+  return out;
 }

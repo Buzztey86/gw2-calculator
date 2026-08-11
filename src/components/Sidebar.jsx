@@ -1,7 +1,7 @@
 import GearStatsPanel from "./GearStatsPanel";
 import AvailableBuffsPanel from "./AvailableBuffsPanel";
 
-export default function Sidebar({ professionName, gearTotal, traitBonuses, triggeredEffects, availableBuffs, effects, activeTraits }) {
+export default function Sidebar({ professionName, gearTotal, rarity, traitBonuses, triggeredEffects, availableBuffs, effects, activeTraits }) {
   return (
     <div className="panel sidebar-panel">
       <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
@@ -10,6 +10,7 @@ export default function Sidebar({ professionName, gearTotal, traitBonuses, trigg
       <GearStatsPanel
         professionName={professionName}
         gearTotal={gearTotal}
+        rarity={rarity}
         traitBonuses={traitBonuses}
         triggeredEffects={triggeredEffects}
       />
