@@ -8,6 +8,7 @@ import Sidebar from "./components/Sidebar";
 import { useProfessionData, useStaticData } from "./hooks/useGw2Data";
 import { validateBuild, getActiveTraits, getTraitAttributeBonuses, pickDefaultMajors, getAvailableBuffs } from "./lib/build-model";
 import { computeGearAttributesFromSlots, fillAllSlots } from "./lib/stats";
+import { professionColor } from "./lib/professionColors";
 
 function defaultLinesFor(professionData) {
   const core = professionData.specializations.core;
@@ -97,7 +98,7 @@ export default function App() {
 
             {tab === "talente" && (
               <div className="grid-cols grid-2">
-                <div className="panel">
+                <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
                   <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                     Talente (3-Linien-System)
                   </div>
@@ -113,7 +114,7 @@ export default function App() {
                   />
                 </div>
 
-                <div className="panel">
+                <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
                   <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                     Waffenfähigkeiten (live nach Talenten)
                   </div>

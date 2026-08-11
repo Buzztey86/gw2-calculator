@@ -5,19 +5,19 @@
    One accent color; green/red are semantic (deltas), not brand.
    ============================================================ */
 :root {
-  --bg: #150f0a;
-  --surface: #1e1610;
-  --surface-2: #271c13;
-  --border: #382818;
-  --border-strong: #4a361f;
+  --bg: #14151c;
+  --surface: #171921;
+  --surface-2: #1e202a;
+  --border: #2a2d38;
+  --border-strong: #3a3e4c;
 
-  --text: #f5efe6;
-  --text-muted: #a89a89;
-  --text-faint: #716455;
+  --text: #eef0f5;
+  --text-muted: #8c93a8;
+  --text-faint: #5b6172;
 
-  --accent: #6e6bf4;
-  --accent-bg: rgba(110, 107, 244, 0.14);
-  --accent-border: rgba(110, 107, 244, 0.45);
+  --accent: #c9aa65;
+  --accent-bg: rgba(201, 170, 101, 0.12);
+  --accent-border: rgba(201, 170, 101, 0.4);
 
   --positive: #4ade80;
   --positive-bg: rgba(74, 222, 128, 0.1);
