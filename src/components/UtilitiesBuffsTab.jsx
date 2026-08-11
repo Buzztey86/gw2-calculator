@@ -9,7 +9,7 @@ const UTILITY_CATEGORY_LABELS = {
   stompFinisher: "Downed-Finisher / Instant-Kill",
 };
 
-const KIND_LABEL = { skill: "Skill", trait: "Talent" };
+const KIND_LABEL = { skill: "Skill", trait: "Talent", rune: "Rune", food: "Food" };
 
 function Checkbox({ checked }) {
   return (
@@ -69,6 +69,11 @@ function ProviderList({ providers, filterText }) {
                   </span>
                 </div>
                 <div style={{ fontSize: 10.5, color: "var(--text-muted)" }}>{item.description}</div>
+                {item.matchedFilters && item.matchedFilters.length > 0 && (
+                  <div style={{ fontSize: 9.5, color: "var(--text-faint)", marginTop: 2 }}>
+                    erfüllt: {item.matchedFilters.join(", ")}
+                  </div>
+                )}
               </div>
             </div>
           ))}
@@ -82,17 +87,36 @@ function itemKey(item) {
   return `${item.type}:${item.key}`;
 }
 
-// Schlüssel zum Abgleich, ob dieselbe Fähigkeit/Talent in mehreren Filter-Listen auftaucht
+// Schlüssel zum Abgleich, ob dieselbe Fähigkeit/Talent mehrfach auftaucht
 function providerKey(p) {
   return `${p.profession}::${p.name}`;
 }
 
-function intersectProviders(lists) {
-  if (lists.length === 0) return [];
-  if (lists.length === 1) return lists[0];
-  const [first, ...rest] = lists;
-  const restKeySets = rest.map((list) => new Set(list.map(providerKey)));
-  return first.filter((p) => restKeySets.every((keys) => keys.has(providerKey(p))));
+/**
+ * Kombiniert mehrere Filter-Ergebnislisten auf KLASSEN-Ebene, nicht Skill-Ebene:
+ * eine Klasse qualifiziert sich, wenn sie in JEDER gewählten Filter-Liste mindestens
+ * einen Eintrag hat (auch über verschiedene Skills hinweg). Für qualifizierende
+ * Klassen werden dann ALLE Einträge aus ALLEN Filtern gezeigt, jeweils markiert,
+ * welche(n) Filter sie erfüllen.
+ */
+function intersectByProfession(taggedLists) {
+  if (taggedLists.length === 0) return [];
+  if (taggedLists.length === 1) {
+    return taggedLists[0].providers.map((p) => ({ ...p, matchedFilters: [taggedLists[0].filterLabel] }));
+  }
+  const profSets = taggedLists.map(({ providers }) => new Set(providers.map((p) => p.profession)));
+  const qualifyingProfs = new Set([...profSets[0]].filter((prof) => profSets.every((set) => set.has(prof))));
+
+  const byKey = new Map(); // providerKey -> merged entry mit matchedFilters-Set
+  for (const { filterLabel, providers } of taggedLists) {
+    for (const p of providers) {
+      if (!qualifyingProfs.has(p.profession)) continue;
+      const key = providerKey(p);
+      if (!byKey.has(key)) byKey.set(key, { ...p, matchedFilters: new Set() });
+      byKey.get(key).matchedFilters.add(filterLabel);
+    }
+  }
+  return [...byKey.values()].map((p) => ({ ...p, matchedFilters: [...p.matchedFilters] }));
 }
 
 export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects }) {
@@ -118,8 +142,8 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
     return item.type === "utility" ? utilityIndex?.[item.key] || [] : boonProviders?.[item.key] || [];
   }
 
-  const allLists = selectedItems.map(providersFor);
-  const combinedResults = intersectProviders(allLists);
+  const allTaggedLists = selectedItems.map((item) => ({ filterLabel: labelFor(item), providers: providersFor(item) }));
+  const combinedResults = intersectByProfession(allTaggedLists);
 
   return (
     <div className="grid-cols" style={{ gridTemplateColumns: "1fr 2fr" }}>
@@ -212,14 +236,16 @@ export default function UtilitiesBuffsTab({ utilityIndex, boonProviders, effects
             <ProviderList providers={combinedResults} filterText={filterText} />
             {selectedItems.length > 1 && combinedResults.length === 0 && (
               <div style={{ fontSize: 11.5, color: "var(--text-faint)", marginTop: 8 }}>
-                Keine Fähigkeit/kein Talent erfüllt alle {selectedItems.length} gewählten Filter gleichzeitig.
+                Keine Klasse bietet alle {selectedItems.length} gewählten Filter gleichzeitig an (auch nicht über
+                unterschiedliche Fähigkeiten).
               </div>
             )}
           </>
         ) : (
           <div style={{ fontSize: 12.5, color: "var(--text-muted)" }}>
-            Wähle links eine oder mehrere Utility-Kategorien bzw. Boons. Bei mehreren Auswahlen werden nur
-            Fähigkeiten/Talente gezeigt, die <strong>alle</strong> gewählten Filter gleichzeitig erfüllen (UND-Verknüpfung).
+            Wähle links eine oder mehrere Utility-Kategorien bzw. Boons. Bei mehreren Auswahlen werden alle Klassen
+            gezeigt, die <strong>jeden</strong> gewählten Filter irgendwie abdecken (auch über verschiedene
+            Fähigkeiten hinweg) – inklusive der jeweils passenden Skills/Talente.
           </div>
         )}
       </div>

@@ -7,6 +7,7 @@ import {
   summarizeRuneBonus,
 } from "../lib/stats";
 import Icon from "./Icon";
+import SearchableSelect from "./SearchableSelect";
 
 function totalInfusionSlots(rarity, weaponSetup) {
   const slots = getAllSlots(weaponSetup);
@@ -56,6 +57,8 @@ export default function GearSlotPicker({
 }) {
   const slots = getAllSlots(weaponSetup);
   const combos = Object.keys(STAT_COMBOS);
+  const comboOptions = combos.map((c) => ({ value: c, label: `${c} (${STAT_COMBO_ROLE[c]})` }));
+  const comboOptionsPlain = combos.map((c) => ({ value: c, label: c }));
   const slotCount = totalInfusionSlots(rarity, weaponSetup);
   const sigilSlotLabels = weaponSetup === "2h" ? ["Sigill 1", "Sigill 2"] : ["Sigill (Haupthand)", "Sigill (Nebenhand)"];
 
@@ -64,7 +67,7 @@ export default function GearSlotPicker({
   }
 
   function handleQuickFill(prefixName) {
-    setSlotSelections(fillAllSlots(prefixName, weaponSetup));
+    if (prefixName) setSlotSelections(fillAllSlots(prefixName, weaponSetup));
   }
 
   function handleWeaponSetupChange(setup) {
@@ -85,6 +88,18 @@ export default function GearSlotPicker({
   }
 
   const selectedRuneObj = runeOptions.find((r) => r.name === selectedRune);
+
+  const sigilSelectOptions = sigilOptions.map((s) => ({ value: String(s.id), label: s.name, icon: s.icon, title: s.effect }));
+  const relicSelectOptions = relicOptions.map((r) => ({ value: String(r.id), label: r.name, icon: r.icon, title: r.description }));
+  const runeSelectOptions = runeOptions.map((r) => ({
+    value: r.name,
+    label: r.name,
+    icon: r.icon,
+    title: summarizeRuneBonus(r.statBonuses),
+  }));
+  const infusionSelectOptions = infusionOptions.map((i) => ({ value: String(i.id), label: i.name, icon: i.icon }));
+  const foodSelectOptions = foodOptions.map((f) => ({ value: String(f.id), label: f.name, icon: f.icon, title: f.fullDescription }));
+  const utilitySelectOptions = utilityOptions.map((u) => ({ value: String(u.id), label: u.name, icon: u.icon, title: u.fullDescription }));
 
   return (
     <div>
@@ -122,14 +137,9 @@ export default function GearSlotPicker({
         <div className="label" style={{ marginBottom: 6 }}>
           Schnellauswahl (alle Slots auf einmal setzen)
         </div>
-        <select defaultValue="" onChange={(e) => e.target.value && handleQuickFill(e.target.value)} style={{ marginBottom: 20 }}>
-          <option value="">– komplettes Set wählen –</option>
-          {combos.map((c) => (
-            <option key={c} value={c}>
-              {c} ({STAT_COMBO_ROLE[c]})
-            </option>
-          ))}
-        </select>
+        <div style={{ marginBottom: 20 }}>
+          <SearchableSelect options={comboOptions} value="" onChange={handleQuickFill} placeholder="– komplettes Set wählen –" />
+        </div>
 
         <div className="label" style={{ marginBottom: 10 }}>
           Einzelne Slots (Mix & Match)
@@ -138,14 +148,12 @@ export default function GearSlotPicker({
           {slots.map((slot) => (
             <div key={slot.key}>
               <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 3 }}>{slot.label}</div>
-              <select value={slotSelections[slot.key] || ""} onChange={(e) => handleSlotChange(slot.key, e.target.value)}>
-                <option value="">– keine –</option>
-                {combos.map((c) => (
-                  <option key={c} value={c}>
-                    {c}
-                  </option>
-                ))}
-              </select>
+              <SearchableSelect
+                options={comboOptionsPlain}
+                value={slotSelections[slot.key] || ""}
+                onChange={(v) => handleSlotChange(slot.key, v)}
+                emptyLabel="– keine –"
+              />
             </div>
           ))}
         </div>
@@ -157,14 +165,12 @@ export default function GearSlotPicker({
             <div className="label" style={{ marginBottom: 6 }}>
               {label}
             </div>
-            <select value={selectedSigils[i] || ""} onChange={(e) => handleSigilChange(i, e.target.value)}>
-              <option value="">– kein Sigill –</option>
-              {sigilOptions.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
+            <SearchableSelect
+              options={sigilSelectOptions}
+              value={selectedSigils[i] ? String(selectedSigils[i]) : ""}
+              onChange={(v) => handleSigilChange(i, v)}
+              emptyLabel="– kein Sigill –"
+            />
             {selectedSigils[i] && (
               <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>
                 {sigilOptions.find((s) => s.id === selectedSigils[i])?.effect}
@@ -176,14 +182,12 @@ export default function GearSlotPicker({
         <div className="label" style={{ marginBottom: 6, marginTop: 8 }}>
           Relic
         </div>
-        <select value={selectedRelic || ""} onChange={(e) => setSelectedRelic(e.target.value ? Number(e.target.value) : null)}>
-          <option value="">– kein Relic –</option>
-          {relicOptions.map((r) => (
-            <option key={r.id} value={r.id}>
-              {r.name}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          options={relicSelectOptions}
+          value={selectedRelic ? String(selectedRelic) : ""}
+          onChange={(v) => setSelectedRelic(v ? Number(v) : null)}
+          emptyLabel="– kein Relic –"
+        />
         {selectedRelic && (
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>
             {relicOptions.find((r) => r.id === selectedRelic)?.description}
@@ -196,14 +200,12 @@ export default function GearSlotPicker({
       </Section>
 
       <Section title="Rune" subtitle={`alle ${runeOptions.length} Superior Runes, 6-teiliger Bonus`}>
-        <select value={selectedRune || ""} onChange={(e) => setSelectedRune(e.target.value || null)}>
-          <option value="">– keine Rune –</option>
-          {runeOptions.map((r) => (
-            <option key={r.name} value={r.name} title={summarizeRuneBonus(r.statBonuses)}>
-              {r.name}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          options={runeSelectOptions}
+          value={selectedRune || ""}
+          onChange={(v) => setSelectedRune(v || null)}
+          emptyLabel="– keine Rune –"
+        />
         {selectedRuneObj && (
           <div style={{ display: "flex", gap: 8, marginTop: 8, alignItems: "flex-start" }}>
             <Icon src={selectedRuneObj.icon} size={28} />
@@ -225,19 +227,13 @@ export default function GearSlotPicker({
         ) : (
           <>
             <div style={{ fontSize: 11, color: "var(--text-muted)", marginBottom: 8 }}>{slotCount} Sockel verfügbar</div>
-            <select
-              value={selectedInfusion || ""}
-              onChange={(e) => setSelectedInfusion(e.target.value ? Number(e.target.value) : null)}
-              style={{ marginBottom: 6 }}
-            >
-              <option value="">– keine Infusion –</option>
-              {infusionOptions.map((i) => (
-                <option key={i.id} value={i.id}>
-                  {i.name}
-                </option>
-              ))}
-            </select>
-            <div style={{ fontSize: 10.5, color: "var(--text-faint)" }}>
+            <SearchableSelect
+              options={infusionSelectOptions}
+              value={selectedInfusion ? String(selectedInfusion) : ""}
+              onChange={(v) => setSelectedInfusion(v ? Number(v) : null)}
+              emptyLabel="– keine Infusion –"
+            />
+            <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 6 }}>
               Wird auf alle {slotCount} verfügbaren Sockel angewendet (vereinfachtes Modell).
             </div>
           </>
@@ -248,31 +244,27 @@ export default function GearSlotPicker({
         <div className="label" style={{ marginBottom: 6 }}>
           Nahrung (Food)
         </div>
-        <select value={selectedFood || ""} onChange={(e) => setSelectedFood(e.target.value ? Number(e.target.value) : null)} style={{ marginBottom: 6 }}>
-          <option value="">– keine Nahrung –</option>
-          {foodOptions.map((f) => (
-            <option key={f.id} value={f.id} title={f.fullDescription}>
-              {f.name}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          options={foodSelectOptions}
+          value={selectedFood ? String(selectedFood) : ""}
+          onChange={(v) => setSelectedFood(v ? Number(v) : null)}
+          emptyLabel="– keine Nahrung –"
+        />
         {selectedFood && (
-          <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginBottom: 16 }}>
+          <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4, marginBottom: 16 }}>
             {foodOptions.find((f) => f.id === selectedFood)?.fullDescription}
           </div>
         )}
 
-        <div className="label" style={{ marginBottom: 6 }}>
+        <div className="label" style={{ marginBottom: 6, marginTop: selectedFood ? 0 : 16 }}>
           Utility (Öl/Stein/Kristall)
         </div>
-        <select value={selectedUtility || ""} onChange={(e) => setSelectedUtility(e.target.value ? Number(e.target.value) : null)}>
-          <option value="">– kein Utility-Konsumgut –</option>
-          {utilityOptions.map((u) => (
-            <option key={u.id} value={u.id} title={u.fullDescription}>
-              {u.name}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          options={utilitySelectOptions}
+          value={selectedUtility ? String(selectedUtility) : ""}
+          onChange={(v) => setSelectedUtility(v ? Number(v) : null)}
+          emptyLabel="– kein Utility-Konsumgut –"
+        />
         {selectedUtility && (
           <div style={{ fontSize: 10.5, color: "var(--text-faint)", marginTop: 4 }}>
             {utilityOptions.find((u) => u.id === selectedUtility)?.fullDescription}

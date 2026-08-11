@@ -1,4 +1,5 @@
 import Icon from "./Icon";
+import SearchableSelect from "./SearchableSelect";
 
 function TraitTierGrid({ spec, selectedIds, onToggle }) {
   return (
@@ -86,14 +87,12 @@ export default function TraitLinePicker({
         <div className="label" style={{ marginBottom: 6 }}>
           Elite-Spezialisierung
         </div>
-        <select value={eliteSpec || ""} onChange={(e) => handleEliteChange(e.target.value)}>
-          <option value="">Keine (nur Core-Linien)</option>
-          {elite.map((s) => (
-            <option key={s.id} value={s.name}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+        <SearchableSelect
+          options={elite.map((s) => ({ value: s.name, label: s.name, icon: s.icon }))}
+          value={eliteSpec || ""}
+          onChange={handleEliteChange}
+          emptyLabel="Keine (nur Core-Linien)"
+        />
       </div>
 
       {!validation.valid && (
@@ -107,22 +106,22 @@ export default function TraitLinePicker({
 
       {[0, 1, 2].map((slotIndex) => {
         const lineId = lines[slotIndex];
+        const lineOptions = availableSpecs
+          .filter((s) => !lines.includes(s.id) || s.id === lineId)
+          .map((s) => ({ value: String(s.id), label: `${s.name}${s.elite ? " (Elite)" : ""}`, icon: s.icon }));
         return (
           <div key={slotIndex} className="line-select-row">
             <span className="label" style={{ minWidth: 60 }}>
               Linie {slotIndex + 1}
             </span>
-            <select value={lineId || ""} onChange={(e) => handleLineChange(slotIndex, Number(e.target.value))}>
-              <option value="">– wählen –</option>
-              {availableSpecs
-                .filter((s) => !lines.includes(s.id) || s.id === lineId)
-                .map((s) => (
-                  <option key={s.id} value={s.id}>
-                    {s.name}
-                    {s.elite ? " (Elite)" : ""}
-                  </option>
-                ))}
-            </select>
+            <div style={{ flex: 1 }}>
+              <SearchableSelect
+                options={lineOptions}
+                value={lineId ? String(lineId) : ""}
+                onChange={(v) => handleLineChange(slotIndex, v ? Number(v) : null)}
+                emptyLabel="– wählen –"
+              />
+            </div>
           </div>
         );
       })}
