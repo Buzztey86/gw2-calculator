@@ -59,23 +59,37 @@ function skillConditionDPS(facts, tickDamage) {
 }
 
 /**
- * @param skillFactsList array of { name, facts } - facts should be the EFFECTIVE
- *   (traited) facts from getEffectiveFacts, so trait modifiers are reflected
+ * @param skillFactsList array of { name, slot, facts } - facts should be the
+ *   EFFECTIVE (traited) facts from getEffectiveFacts, so trait modifiers are reflected
  * @param total combined attribute totals (gear+trait+consumables)
  * @param derived output of computeDerivedStats for `total`
  * @param weaponStrength 1047.5 (exotic) or 1100 (ascended), matches sidebar's example-hit calc
  */
 export function estimateSustainedDPS(skillFactsList, total, derived, weaponStrength = 1047.5) {
   const tickDamage = conditionTickDamage(total.ConditionDamage || 0);
+
+  // Manche Klassen (z.B. Thief mit Initiative) nutzen keine klassischen Skill-Abklingzeiten fuer
+  // Waffen-Skills 2-5, sondern eine begrenzte Ressource - die GW2-API liefert dafuer keine
+  // strukturierten Kosten-Facts (verifiziert per Live-API-Abfrage, nicht nur Vermutung). Wenn KEIN
+  // Skill im aktuellen Set einen Recharge-Fact hat, gilt das generell als "Recharge unbekannt":
+  // nur die kostenlose Autoattack-Kette (Slot "Weapon_1") wird gezaehlt, der Rest ausgeschlossen
+  // statt faelschlich als spammable behandelt zu werden.
+  const weaponSlotSkills = skillFactsList.filter((s) => s.slot?.startsWith("Weapon_"));
+  const hasAnyRecharge = weaponSlotSkills.some((s) => s.facts?.some((f) => f.type === "Recharge"));
+  const resourceBased = weaponSlotSkills.length > 0 && !hasAnyRecharge;
+  const relevantSkills = resourceBased
+    ? skillFactsList.filter((s) => !s.slot?.startsWith("Weapon_") || s.slot === "Weapon_1")
+    : skillFactsList;
+
   let powerDPS = 0;
   let conditionDPS = 0;
   const perSkill = [];
-  for (const { name, facts } of skillFactsList) {
+  for (const { name, facts } of relevantSkills) {
     const p = skillPowerDPS(facts, total.Power, derived.critChance, derived.critDamage, weaponStrength);
     const c = skillConditionDPS(facts, tickDamage);
     if (p > 0 || c > 0) perSkill.push({ name, power: p, condition: c });
     powerDPS += p;
     conditionDPS += c;
   }
-  return { powerDPS, conditionDPS, totalDPS: powerDPS + conditionDPS, perSkill };
+  return { powerDPS, conditionDPS, totalDPS: powerDPS + conditionDPS, perSkill, resourceBased };
 }

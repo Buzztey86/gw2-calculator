@@ -73,12 +73,16 @@ function SkillCard({ skill, activeTraitIds, traitsById }) {
 
 function DPSEstimatePanel({ weaponSkills, utilitySkillObjects, activeTraitIds, traitsById, total, derived, weaponStrength }) {
   if (!total || !derived) return null;
-  const allSkills = [...weaponSkills, ...utilitySkillObjects];
+  const allSkills = [
+    ...weaponSkills.map((s) => ({ ...s, slot: s.slot || "Weapon_1" })),
+    ...utilitySkillObjects,
+  ];
   const skillFactsList = allSkills.map((s) => ({
     name: s.name,
+    slot: s.slot,
     facts: getEffectiveFacts(s, activeTraitIds, traitsById).facts,
   }));
-  const { powerDPS, conditionDPS, totalDPS } = estimateSustainedDPS(skillFactsList, total, derived, weaponStrength);
+  const { powerDPS, conditionDPS, totalDPS, resourceBased } = estimateSustainedDPS(skillFactsList, total, derived, weaponStrength);
   if (totalDPS < 1) return null;
 
   return (
@@ -91,6 +95,13 @@ function DPSEstimatePanel({ weaponSkills, utilitySkillObjects, activeTraitIds, t
         {Math.round(powerDPS).toLocaleString("en-US")} power + {Math.round(conditionDPS).toLocaleString("en-US")}{" "}
         condition (perfect on-cooldown usage, no rotation/downtime modeled)
       </div>
+      {resourceBased && (
+        <div className="sub" style={{ color: "var(--negative)", marginTop: 4 }}>
+          ⚠ No recharge data is available for this weapon's active skills (common for resource-based
+          mechanics like Thief's Initiative) - only the autoattack chain is counted, skills 2-5 are
+          excluded to avoid overcounting.
+        </div>
+      )}
     </div>
   );
 }
