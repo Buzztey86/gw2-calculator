@@ -28,7 +28,7 @@ function Checkbox({ checked }) {
     >
       {checked && (
         <svg width="9" height="9" viewBox="0 0 16 16" fill="none">
-          <path d="M2 8.5L6 12L14 3" stroke="#150f0a" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M2 8.5L6 12L14 3" stroke="var(--bg)" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
       )}
     </span>
