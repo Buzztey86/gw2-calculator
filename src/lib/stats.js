@@ -210,23 +210,42 @@ export function averageHitDamage(power, critChance, critDamage, weaponStrength =
 export function parseRuneBonuses(statBonusStrings) {
   const bonuses = {};
   for (const s of statBonusStrings || []) {
-    const m = s.match(/^\+?(\d+)%?\s+(.+)$/);
+    const m = s.match(/^\+?(\d+(?:\.\d+)?)%?\s+(.+)$/);
     if (!m) continue;
     const value = Number(m[1]);
     const rawName = m[2].trim();
+    const isPercent = s.includes("%");
     const nameMap = {
       Power: "Power", Precision: "Precision", Toughness: "Toughness", Vitality: "Vitality",
       Ferocity: "Ferocity", "Condition Damage": "ConditionDamage", Expertise: "Expertise",
-      Concentration: "Concentration", "Healing Power": "HealingPower",
+      Concentration: "Concentration", "Healing Power": "HealingPower", Healing: "HealingPower",
     };
-    const attr = nameMap[rawName];
+    let attr = nameMap[rawName];
+    // Manche Runen geben Segens-/Zustandsdauer direkt in % statt über Concentration/Expertise-Punkte -
+    // hier näherungsweise in Attributpunkte umgerechnet (15 Punkte = 1%), damit sie in derselben
+    // Rechnung landen wie alle anderen Boni (leichte Vereinfachung, im Tooltip transparent gemacht).
+    if (!attr && isPercent && /Boon Duration/i.test(rawName)) attr = "Concentration";
+    if (!attr && isPercent && /Condition Duration/i.test(rawName)) attr = "Expertise";
     if (!attr) continue;
-    bonuses[attr] = Math.max(bonuses[attr] || 0, value);
+    const effectiveValue = isPercent && (attr === "Concentration" || attr === "Expertise") && !nameMap[rawName] ? value * 15 : value;
+    bonuses[attr] = Math.max(bonuses[attr] || 0, effectiveValue);
   }
   return bonuses;
 }
 
+/** Für Tooltips: fasst den Bonus als lesbaren String zusammen, z.B. "+100 Power, +125 Ferocity". */
+export function summarizeRuneBonus(statBonusStrings) {
+  const bonuses = parseRuneBonuses(statBonusStrings);
+  const labels = { Power: "Power", Precision: "Precision", Toughness: "Toughness", Vitality: "Vitality",
+    Ferocity: "Ferocity", ConditionDamage: "Condition Damage", Expertise: "Expertise",
+    Concentration: "Concentration", HealingPower: "Healing Power" };
+  return Object.entries(bonuses)
+    .map(([attr, val]) => `+${Math.round(val)} ${labels[attr] || attr}`)
+    .join(", ");
+}
+
 // --- Infusionen: Summe aller ausgewählten Infusionen (Agony Resistance wird ignoriert, betrifft nur Fraktal-Ueberleben, nicht die angezeigten Attribute) ---
+const INFUSION_NAME_MAP = { BoonDuration: "Concentration", ConditionDuration: "Expertise", Healing: "HealingPower", CritDamage: "Ferocity" };
 export function sumInfusionBonuses(selectedInfusions, infusionCatalog) {
   const bonuses = {};
   for (const infId of selectedInfusions) {
@@ -234,7 +253,8 @@ export function sumInfusionBonuses(selectedInfusions, infusionCatalog) {
     if (!inf) continue;
     for (const [stat, value] of Object.entries(inf.stats || {})) {
       if (stat === "AgonyResistance") continue;
-      bonuses[stat] = (bonuses[stat] || 0) + value;
+      const attr = INFUSION_NAME_MAP[stat] || stat;
+      bonuses[attr] = (bonuses[attr] || 0) + value;
     }
   }
   return bonuses;
@@ -245,6 +265,17 @@ export function mergeBonuses(total, bonuses) {
   const out = { ...total };
   for (const [attr, value] of Object.entries(bonuses)) {
     out[attr] = (out[attr] || 0) + value;
+  }
+  return out;
+}
+
+// Berechnet den Attribut-Bonus eines Food-/Utility-Eintrags aus den neuen
+// WvW-Katalogen (flat + percentEffects statt des alten einfachen Formats).
+export function wvwConsumableBonus(item, currentTotal) {
+  if (!item) return {};
+  const out = { ...(item.flat || {}) };
+  for (const eff of item.percentEffects || []) {
+    out[eff.attr] = (out[eff.attr] || 0) + (currentTotal[eff.ofAttr] || 0) * eff.pct;
   }
   return out;
 }

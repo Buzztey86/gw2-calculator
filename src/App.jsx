@@ -13,11 +13,11 @@ import {
   parseRuneBonuses,
   sumInfusionBonuses,
   mergeBonuses,
+  wvwConsumableBonus,
   infusionSlotsByType,
   getAllSlots,
 } from "./lib/stats";
 import { professionColor } from "./lib/professionColors";
-import { FOOD_OPTIONS, UTILITY_OPTIONS, consumableBonus } from "./lib/consumables";
 
 function defaultLinesFor(professionData) {
   const core = professionData.specializations.core;
@@ -40,13 +40,21 @@ export default function App() {
   const [slotSelections, setSlotSelections] = useState(() => fillAllSlots("Berserker's", "2h"));
   const [rarity, setRarity] = useState("exotic");
   const [selectedRune, setSelectedRune] = useState(null);
+  const [selectedSigils, setSelectedSigils] = useState([null, null]);
+  const [selectedRelic, setSelectedRelic] = useState(null);
   const [selectedInfusion, setSelectedInfusion] = useState(null);
   const [selectedFood, setSelectedFood] = useState(null);
   const [selectedUtility, setSelectedUtility] = useState(null);
 
   const { data, error, loading } = useProfessionData(professionId);
   const professionsIndex = useStaticData("professions-index");
-  const gear = useStaticData("gear");
+  const allRunes = useStaticData("all-runes");
+  const allSigils = useStaticData("all-sigils");
+  const allRelics = useStaticData("all-relics");
+  const wvwFoods = useStaticData("wvw-foods");
+  const wvwUtilities = useStaticData("wvw-utilities");
+  const wvwInfusions = useStaticData("wvw-infusions");
+
   const professionIcons = useMemo(() => {
     if (!professionsIndex) return {};
     return Object.fromEntries(professionsIndex.map((p) => [p.id, p.icon]));
@@ -84,11 +92,16 @@ export default function App() {
     [slotSelections, weaponSetup, rarity]
   );
 
-  const runeOptions = useMemo(() => gear?.runes || [], [gear]);
-  const infusionOptions = useMemo(() => gear?.infusions || [], [gear]);
+  const runeOptions = useMemo(() => allRunes || [], [allRunes]);
+  const sigilOptions = useMemo(() => allSigils || [], [allSigils]);
+  const relicOptions = useMemo(() => allRelics || [], [allRelics]);
+  const foodOptions = useMemo(() => wvwFoods || [], [wvwFoods]);
+  const utilityOptions = useMemo(() => wvwUtilities || [], [wvwUtilities]);
+  const infusionOptions = useMemo(() => wvwInfusions || [], [wvwInfusions]);
   const slotCount = useMemo(() => totalInfusionSlots(rarity, weaponSetup), [rarity, weaponSetup]);
 
-  // Ausrüstungs-Boni (Rune + Infusionen) auf das Slot-Ergebnis anwenden
+  // Ausrüstungs-Boni (Rune + Infusionen) auf das Slot-Ergebnis anwenden.
+  // Sigille/Relic geben ueberwiegend Trigger-Effekte, keine permanenten Stats - fliessen bewusst nicht ein.
   const gearTotal = useMemo(() => {
     let t = slotTotal;
     const rune = runeOptions.find((r) => r.name === selectedRune);
@@ -103,12 +116,12 @@ export default function App() {
   // Konsumgüter (Food/Utility) separat, da "percentOf" den bereits berechneten gearTotal braucht
   const totalWithConsumables = useMemo(() => {
     let t = gearTotal;
-    const food = FOOD_OPTIONS.find((f) => f.id === selectedFood);
-    if (food) t = mergeBonuses(t, consumableBonus(food, t));
-    const utility = UTILITY_OPTIONS.find((u) => u.id === selectedUtility);
-    if (utility) t = mergeBonuses(t, consumableBonus(utility, t));
+    const food = foodOptions.find((f) => f.id === selectedFood);
+    if (food) t = mergeBonuses(t, wvwConsumableBonus(food, t));
+    const utility = utilityOptions.find((u) => u.id === selectedUtility);
+    if (utility) t = mergeBonuses(t, wvwConsumableBonus(utility, t));
     return t;
-  }, [gearTotal, selectedFood, selectedUtility]);
+  }, [gearTotal, selectedFood, selectedUtility, foodOptions, utilityOptions]);
 
   return (
     <div className="app-shell">
@@ -173,7 +186,7 @@ export default function App() {
             {tab === "ausruestung" && (
               <div className="panel">
                 <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
-                  Ausrüstung (Mix & Match pro Slot)
+                  Ausrüstung
                 </div>
                 <GearSlotPicker
                   weaponSetup={weaponSetup}
@@ -185,13 +198,19 @@ export default function App() {
                   runeOptions={runeOptions}
                   selectedRune={selectedRune}
                   setSelectedRune={setSelectedRune}
+                  sigilOptions={sigilOptions}
+                  selectedSigils={selectedSigils}
+                  setSelectedSigils={setSelectedSigils}
+                  relicOptions={relicOptions}
+                  selectedRelic={selectedRelic}
+                  setSelectedRelic={setSelectedRelic}
                   infusionOptions={infusionOptions}
                   selectedInfusion={selectedInfusion}
                   setSelectedInfusion={setSelectedInfusion}
-                  foodOptions={FOOD_OPTIONS}
+                  foodOptions={foodOptions}
                   selectedFood={selectedFood}
                   setSelectedFood={setSelectedFood}
-                  utilityOptions={UTILITY_OPTIONS}
+                  utilityOptions={utilityOptions}
                   selectedUtility={selectedUtility}
                   setSelectedUtility={setSelectedUtility}
                 />
