@@ -123,7 +123,7 @@ export function getEffectiveFacts(skill, activeTraitIds, traitsById) {
   for (const tf of skill.traitedFacts || []) {
     if (!activeTraitIds.has(tf.requiresTrait)) continue;
     if (tf.overrides == null || !facts[tf.overrides]) continue;
-    const { requiresTrait, overrides, ...substantive } = tf;
+    const { requiresTrait: _requiresTrait, overrides: _overrides, ...substantive } = tf;
     facts[tf.overrides] = { ...facts[tf.overrides], ...substantive };
     changedIndexes.add(tf.overrides);
     const name = traitsById.get(tf.requiresTrait)?.name;

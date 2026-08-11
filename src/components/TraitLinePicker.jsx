@@ -107,7 +107,6 @@ export default function TraitLinePicker({
 
       {[0, 1, 2].map((slotIndex) => {
         const lineId = lines[slotIndex];
-        const spec = specById.get(lineId);
         return (
           <div key={slotIndex} className="line-select-row">
             <span className="label" style={{ minWidth: 60 }}>

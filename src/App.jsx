@@ -43,7 +43,10 @@ export default function App() {
     setSelectedMajors(majors);
   }, [data]);
 
-  const build = { professionId, eliteSpec, lines, selectedMajors };
+  const build = useMemo(
+    () => ({ professionId, eliteSpec, lines, selectedMajors }),
+    [professionId, eliteSpec, lines, selectedMajors]
+  );
   const validation = useMemo(() => (data ? validateBuild(build, data) : { valid: false, errors: [] }), [data, build]);
   const activeTraits = useMemo(() => (data ? getActiveTraits(build, data) : []), [data, build]);
   const activeTraitIds = useMemo(() => new Set(activeTraits.map((t) => t.id)), [activeTraits]);
