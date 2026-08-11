@@ -1,6 +1,7 @@
 import { useState } from "react";
 import Icon from "./Icon";
 import { getEffectiveFacts } from "../lib/build-model";
+import { estimateSustainedDPS } from "../lib/dpsEstimate";
 
 // Extrahiert Label + Anzeigewert pro Fact-Typ, getrennt, damit Basis- und
 // Talent-Wert einzeln verglichen und unterschiedlich eingefärbt werden können.
@@ -70,7 +71,40 @@ function SkillCard({ skill, activeTraitIds, traitsById }) {
   );
 }
 
-export default function WeaponSkillBrowser({ professionData, activeTraitIds, traitsById, eliteSpec }) {
+function DPSEstimatePanel({ weaponSkills, utilitySkillObjects, activeTraitIds, traitsById, total, derived, weaponStrength }) {
+  if (!total || !derived) return null;
+  const allSkills = [...weaponSkills, ...utilitySkillObjects];
+  const skillFactsList = allSkills.map((s) => ({
+    name: s.name,
+    facts: getEffectiveFacts(s, activeTraitIds, traitsById).facts,
+  }));
+  const { powerDPS, conditionDPS, totalDPS } = estimateSustainedDPS(skillFactsList, total, derived, weaponStrength);
+  if (totalDPS < 1) return null;
+
+  return (
+    <div className="hero-stat" style={{ marginBottom: 16 }}>
+      <div className="label" style={{ color: "var(--accent)" }}>
+        Estimated Sustained DPS (this weapon + utility skills)
+      </div>
+      <div className="value">{Math.round(totalDPS).toLocaleString("en-US")}</div>
+      <div className="sub">
+        {Math.round(powerDPS).toLocaleString("en-US")} power + {Math.round(conditionDPS).toLocaleString("en-US")}{" "}
+        condition (perfect on-cooldown usage, no rotation/downtime modeled)
+      </div>
+    </div>
+  );
+}
+
+export default function WeaponSkillBrowser({
+  professionData,
+  activeTraitIds,
+  traitsById,
+  eliteSpec,
+  total,
+  derived,
+  rarity,
+  utilitySkillObjects = [],
+}) {
   const weapons = professionData.weapons.filter(
     (w) => w.variants.some((v) => v.skills.length > 0) && (!w.requiresSpecialization || w.requiresSpecialization === eliteSpec)
   );
@@ -78,6 +112,7 @@ export default function WeaponSkillBrowser({ professionData, activeTraitIds, tra
   const safeIdx = Math.min(selectedIdx, Math.max(weapons.length - 1, 0));
   const weapon = weapons[safeIdx];
   const variant = weapon?.variants[0];
+  const weaponStrength = rarity === "ascended" ? 1100 : 1047.5;
 
   return (
     <div>
@@ -93,6 +128,15 @@ export default function WeaponSkillBrowser({ professionData, activeTraitIds, tra
           </button>
         ))}
       </div>
+      <DPSEstimatePanel
+        weaponSkills={variant?.skills || []}
+        utilitySkillObjects={utilitySkillObjects}
+        activeTraitIds={activeTraitIds}
+        traitsById={traitsById}
+        total={total}
+        derived={derived}
+        weaponStrength={weaponStrength}
+      />
       {variant?.skills.map((skill) => (
         <SkillCard key={skill.id} skill={skill} activeTraitIds={activeTraitIds} traitsById={traitsById} />
       ))}

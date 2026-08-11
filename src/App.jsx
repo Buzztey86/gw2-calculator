@@ -18,6 +18,8 @@ import {
   wvwConsumableBonus,
   infusionSlotsByType,
   getAllSlots,
+  addTraitBonuses,
+  computeDerivedStats,
 } from "./lib/stats";
 import { professionColor } from "./lib/professionColors";
 import { decodeBuildCode, peekProfessionFromCode } from "./lib/buildCode";
@@ -194,6 +196,18 @@ export default function App() {
     return t;
   }, [gearTotal, selectedFood, selectedUtility, foodOptions, utilityOptions]);
 
+  const fullTotal = useMemo(() => addTraitBonuses(totalWithConsumables, traitBonuses), [totalWithConsumables, traitBonuses]);
+  const fullDerived = useMemo(
+    () => (displayData ? computeDerivedStats(fullTotal, displayData.name, rarity) : null),
+    [fullTotal, displayData, rarity]
+  );
+  const selectedUtilitySkillObjects = useMemo(() => {
+    if (!displayData) return [];
+    const { heal, utility, elite } = displayData.utilitySkills;
+    const all = [...heal, ...utility, ...elite];
+    return [selectedHeal, ...selectedUtilities, selectedElite].map((id) => all.find((s) => s.id === id)).filter(Boolean);
+  }, [displayData, selectedHeal, selectedUtilities, selectedElite]);
+
   return (
     <div className="app-shell">
       <div className="header">
@@ -266,7 +280,16 @@ export default function App() {
                       </button>
                     </div>
                     {skillTab === "waffen" ? (
-                      <WeaponSkillBrowser professionData={displayData} activeTraitIds={activeTraitIds} traitsById={traitsById} eliteSpec={eliteSpec} />
+                      <WeaponSkillBrowser
+                        professionData={displayData}
+                        activeTraitIds={activeTraitIds}
+                        traitsById={traitsById}
+                        eliteSpec={eliteSpec}
+                        total={fullTotal}
+                        derived={fullDerived}
+                        rarity={rarity}
+                        utilitySkillObjects={selectedUtilitySkillObjects}
+                      />
                     ) : (
                       <UtilitySkillPicker
                         professionData={displayData}
