@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { encodeBuildCode } from "../lib/buildCode";
 
-export default function BuildCodeBar({ build, professionData, paletteMap, onImport }) {
+export default function BuildCodeBar({ build, professionData, paletteMap, onImport, importStatus }) {
   const [importValue, setImportValue] = useState("");
   const [exportValue, setExportValue] = useState("");
   const [copyStatus, setCopyStatus] = useState("");
@@ -45,6 +45,22 @@ export default function BuildCodeBar({ build, professionData, paletteMap, onImpo
         Kompatibel mit dem Spiel/gw2skills.net für Klasse, Talente und Heal-/Utility-/Elite-Skills. Ranger-Pets,
         Revenant-Legenden und Waffenauswahl sind (noch) nicht Teil dieses Tools und werden nicht kodiert.
       </div>
+      {importStatus && (
+        <div
+          style={{
+            fontSize: 11.5,
+            marginBottom: 12,
+            padding: "6px 10px",
+            borderRadius: "var(--radius-sm)",
+            background: importStatus.ok ? "var(--positive-bg)" : "var(--negative-bg)",
+            border: `1px solid ${importStatus.ok ? "var(--positive)" : "var(--negative)"}`,
+            color: importStatus.ok ? "var(--positive)" : "var(--negative)",
+          }}
+        >
+          {importStatus.ok ? "✓ " : "⚠ "}
+          {importStatus.message}
+        </div>
+      )}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
         <div>
           <div style={{ fontSize: 11.5, color: "var(--text-muted)", marginBottom: 6 }}>Exportieren</div>

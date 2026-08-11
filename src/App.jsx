@@ -7,7 +7,7 @@ import UtilitiesBuffsTab from "./components/UtilitiesBuffsTab";
 import UtilitySkillPicker from "./components/UtilitySkillPicker";
 import BuildCodeBar from "./components/BuildCodeBar";
 import Sidebar from "./components/Sidebar";
-import { useProfessionData, useStaticData } from "./hooks/useGw2Data";
+import { useProfessionData, useStaticData, PROFESSION_LIST } from "./hooks/useGw2Data";
 import { validateBuild, getActiveTraits, getTraitAttributeBonuses, pickDefaultMajors, getAvailableBuffs } from "./lib/build-model";
 import {
   computeGearAttributesFromSlots,
@@ -53,8 +53,15 @@ export default function App() {
   const [selectedElite, setSelectedElite] = useState(null);
   const [skillTab, setSkillTab] = useState("waffen");
   const [pendingImportCode, setPendingImportCode] = useState(null);
+  const [importStatus, setImportStatus] = useState(null); // { ok: bool, message: string }
+  const [lastData, setLastData] = useState(null); // letzte erfolgreich geladene Klassendaten, um Aufblitzen beim Wechsel zu vermeiden
 
   const { data, error, loading } = useProfessionData(professionId);
+  // Zeigt die zuletzt geladenen Klassendaten weiter an, waehrend beim Klassenwechsel (z.B. durch
+  // Import) kurz neu geladen wird - verhindert, dass die komplette Oberflaeche (inkl. der
+  // Build-Code-Leiste selbst) sichtbar verschwindet und wieder auftaucht.
+  const displayData = data && data.id === professionId ? data : lastData;
+  const isSwitchingProfession = displayData && displayData.id !== professionId;
   const professionsIndex = useStaticData("professions-index");
   const allRunes = useStaticData("all-runes");
   const allSigils = useStaticData("all-sigils");
@@ -70,6 +77,10 @@ export default function App() {
   }, [professionsIndex]);
 
   useEffect(() => {
+    if (data) setLastData(data);
+  }, [data]);
+
+  useEffect(() => {
     if (!data || data.id !== professionId) return;
     if (pendingImportCode) {
       try {
@@ -80,8 +91,13 @@ export default function App() {
         setSelectedHeal(decoded.selectedHeal);
         setSelectedUtilities(decoded.selectedUtilities);
         setSelectedElite(decoded.selectedElite);
+        const profLabel = PROFESSION_LIST.find((p) => p.id === professionId)?.name || professionId;
+        setImportStatus({
+          ok: true,
+          message: `Import erfolgreich: ${profLabel}${decoded.eliteSpec ? " · " + decoded.eliteSpec : ""}, ${decoded.lines.length} Talentlinien übernommen.`,
+        });
       } catch (err) {
-        console.error("Build-Code-Import fehlgeschlagen:", err.message);
+        setImportStatus({ ok: false, message: "Import fehlgeschlagen: " + err.message });
       }
       setPendingImportCode(null);
       return;
@@ -102,6 +118,7 @@ export default function App() {
 
   function handleImportBuildCode(code) {
     const targetProfession = peekProfessionFromCode(code); // wirft bei ungültigem Code
+    setImportStatus(null);
     setPendingImportCode(code);
     if (targetProfession !== professionId) {
       setProfessionId(targetProfession);
@@ -175,11 +192,11 @@ export default function App() {
 
       <ProfessionPicker selected={professionId} onSelect={setProfessionId} professionIcons={professionIcons} />
 
-      {loading && <div className="loading">Lade {professionId}-Daten…</div>}
+      {loading && !displayData && <div className="loading">Lade {professionId}-Daten…</div>}
       {error && <div className="error-box">Fehler: {error}</div>}
 
-      {data && (
-        <div className="main-layout">
+      {displayData && (
+        <div className="main-layout" style={{ opacity: isSwitchingProfession ? 0.5 : 1, transition: "opacity 0.15s" }}>
           <div className="main-content">
             <div className="tabs">
               <button className={`tab-btn ${tab === "talente" ? "active" : ""}`} onClick={() => setTab("talente")}>
@@ -195,14 +212,20 @@ export default function App() {
 
             {tab === "talente" && (
               <>
-                <BuildCodeBar build={build} professionData={data} paletteMap={paletteMap} onImport={handleImportBuildCode} />
+                <BuildCodeBar
+                  build={build}
+                  professionData={displayData}
+                  paletteMap={paletteMap}
+                  onImport={handleImportBuildCode}
+                  importStatus={importStatus}
+                />
                 <div className="grid-cols grid-2">
                   <div className="panel" style={{ borderLeft: `3px solid ${professionColor(professionId, "solid")}` }}>
                     <div className="label" style={{ color: "var(--accent)", marginBottom: 12 }}>
                       Talente (3-Linien-System)
                     </div>
                     <TraitLinePicker
-                      professionData={data}
+                      professionData={displayData}
                       eliteSpec={eliteSpec}
                       setEliteSpec={setEliteSpec}
                       lines={lines}
@@ -229,10 +252,10 @@ export default function App() {
                       </button>
                     </div>
                     {skillTab === "waffen" ? (
-                      <WeaponSkillBrowser professionData={data} activeTraitIds={activeTraitIds} traitsById={traitsById} />
+                      <WeaponSkillBrowser professionData={displayData} activeTraitIds={activeTraitIds} traitsById={traitsById} eliteSpec={eliteSpec} />
                     ) : (
                       <UtilitySkillPicker
-                        professionData={data}
+                        professionData={displayData}
                         selectedHeal={selectedHeal}
                         setSelectedHeal={setSelectedHeal}
                         selectedUtilities={selectedUtilities}
@@ -289,7 +312,7 @@ export default function App() {
 
           <div className="sidebar-col">
             <Sidebar
-              professionName={data.name}
+              professionName={displayData.name}
               gearTotal={totalWithConsumables}
               rarity={rarity}
               traitBonuses={traitBonuses}

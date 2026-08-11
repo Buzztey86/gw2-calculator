@@ -70,10 +70,13 @@ function SkillCard({ skill, activeTraitIds, traitsById }) {
   );
 }
 
-export default function WeaponSkillBrowser({ professionData, activeTraitIds, traitsById }) {
-  const weapons = professionData.weapons.filter((w) => w.variants.some((v) => v.skills.length > 0));
+export default function WeaponSkillBrowser({ professionData, activeTraitIds, traitsById, eliteSpec }) {
+  const weapons = professionData.weapons.filter(
+    (w) => w.variants.some((v) => v.skills.length > 0) && (!w.requiresSpecialization || w.requiresSpecialization === eliteSpec)
+  );
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const weapon = weapons[selectedIdx];
+  const safeIdx = Math.min(selectedIdx, Math.max(weapons.length - 1, 0));
+  const weapon = weapons[safeIdx];
   const variant = weapon?.variants[0];
 
   return (
@@ -82,7 +85,7 @@ export default function WeaponSkillBrowser({ professionData, activeTraitIds, tra
         {weapons.map((w, i) => (
           <button
             key={w.weaponType + i}
-            className={`weapon-tab ${i === selectedIdx ? "active" : ""}`}
+            className={`weapon-tab ${i === safeIdx ? "active" : ""}`}
             onClick={() => setSelectedIdx(i)}
           >
             {w.weaponType}
