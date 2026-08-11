@@ -81,21 +81,39 @@ export function getActiveTraits(build, professionData) {
   return active;
 }
 
+// Talente, deren AttributeAdjust-Fact strukturell nicht von einem echten Stat-Bonus zu
+// unterscheiden ist (kein verräterisches "text"-Feld), aber laut Beschreibung eindeutig an
+// eine Bedingung (Formwechsel, Modus, Pet-Stat statt Spieler-Stat) gebunden ist - gefunden beim
+// Testen mit vollem Berserker's-Gear auf dem Necromancer (Reaper's Onslaught) und beim
+// systematischen Nachprüfen aller 9 Klassen ergänzt.
+const CONDITIONAL_TRAIT_EXCLUSIONS = new Set([
+  "Fatal Frenzy", // Warrior: "Berserk mode increases power and condition damage" - nur im Berserk-Modus
+  "Reaper's Onslaught", // Necromancer: "while in Reaper's Shroud"
+  "No Quarter", // Thief: "while under the effects of fury"
+  "Fang and Claw", // Ranger: betrifft das Pet, nicht den Spieler selbst
+  "Pet's Prowess", // Ranger: betrifft das Pet, nicht den Spieler selbst
+]);
+
+// Verräterisches "text"-Label statt eines echten Attributnamens = Fact beschreibt die Größe
+// eines getriggerten Effekts (Heilung, Schaden, Barriere, Lebensentzug), keinen permanenten Bonus.
+const TRIGGERED_TEXT_PATTERN = /Damage|Heal|Siphon|Barrier/i;
+
 /**
- * Getriggerte Heil-Effekte (target === "Healing") werden getrennt von echten
- * Attribut-Boni gehalten. Naives Summieren hätte in Tests fälschlich hohe
- * "Healing Power"-Werte erzeugt, weil viele Traits denselben Fact-Typ nutzen,
- * um die Größe eines einmaligen Heileffekts zu beschreiben statt einen
- * permanenten Stat-Bonus.
+ * Getriggerte Effekte (Heilung, Schaden, Barriere, Lebensentzug) werden getrennt von echten
+ * Attribut-Boni gehalten. Naives Summieren hätte in Tests fälschlich hohe Werte erzeugt
+ * (z.B. Necromancer "Terror": +555 "Condition Damage" ist tatsächlich die Schadensmagnitude
+ * des Furcht-Tick-Effekts, kein permanenter Stat) - viele Traits nutzen denselben Fact-Typ,
+ * um die Größe eines Effekts zu beschreiben statt einen permanenten Stat-Bonus.
  */
 export function getTraitAttributeBonuses(activeTraits) {
   const bonuses = {};
   const triggeredEffects = [];
   for (const trait of activeTraits) {
+    if (CONDITIONAL_TRAIT_EXCLUSIONS.has(trait.name)) continue;
     const perTraitMax = {};
     for (const fact of trait.facts || []) {
-      if (fact.type !== "AttributeAdjust" || !fact.target) continue;
-      if (fact.target === "Healing") {
+      if (fact.type !== "AttributeAdjust" || !fact.target || fact.target === "None") continue;
+      if (fact.target === "Healing" || TRIGGERED_TEXT_PATTERN.test(fact.text || "")) {
         triggeredEffects.push({ traitName: trait.name, amount: fact.value });
         continue;
       }

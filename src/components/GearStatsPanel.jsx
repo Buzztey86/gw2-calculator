@@ -117,11 +117,11 @@ export default function GearStatsPanel({ professionName, gearTotal, rarity = "ex
       {triggeredEffects.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div className="label" style={{ marginBottom: 6 }}>
-            Getriggerte Heilungen (nicht in Stats)
+            Getriggerte Effekte (nicht in Stats)
           </div>
           {triggeredEffects.map((e, i) => (
             <div key={i} style={{ fontSize: 11, color: "var(--text-muted)" }}>
-              {e.traitName}: heilt {e.amount}
+              {e.traitName}: {e.amount}
             </div>
           ))}
         </div>
